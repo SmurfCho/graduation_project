@@ -1,0 +1,15 @@
+
+#tool-btn1,#tool-btn2,#tool-btn3,#tool-btn4,#tool-btn5,#tool-btn6{
+  position: relative;
+  display: block;
+  margin:auto;
+  height: 60px;
+  width: 60px;
+  padding:5px;
+  margin-top: 10px;
+}
+.tool-icon{
+  font-size:30px;
+}
+.tool-icon-intro{
+  font-size: 16px;
