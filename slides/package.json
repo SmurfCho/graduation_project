@@ -23,6 +23,7 @@
     "less-loader": "^4.0.5",
     "prop-types": "^15.6.0",
     "react": "^16.1.1",
+    "react-color": "^2.14.0",
     "react-dom": "^16.1.1",
     "react-mixin": "^4.0.0",
     "react-responsive": "^4.0.0",
