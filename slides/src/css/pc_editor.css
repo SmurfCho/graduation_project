@@ -13,16 +13,16 @@
 }
 .tool-icon-intro{
   font-size: 16px;
-<<<<<<< HEAD
+
 }
-=======
->>>>>>> 7dbfaa9732adb5699a37970aed8cb456aa27566e
+
+
 .page{
   position: relative;
   height: 500px;
   width: 500px;
 }
-<<<<<<< HEAD
+
 /*滚动条样式*/
        .sider::-webkit-scrollbar {/*滚动条整体样式*/
            width: 7px;     /*高宽分别对应横竖滚动条的尺寸*/
@@ -45,5 +45,3 @@
   font-size: 16px;
   color:#fff;
 }
-=======
->>>>>>> 7dbfaa9732adb5699a37970aed8cb456aa27566e
