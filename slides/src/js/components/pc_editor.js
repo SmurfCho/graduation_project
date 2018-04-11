@@ -19,33 +19,32 @@ export default class PCEditor extends React.Component{
   constructor(){
 		super();
 		this.state = {
-      originSider: 'visible',
+      originSider: 'visible',/*选择添加类型菜单条*/
       originSiderop:1,
-      textSider: 'hidden',
+      textSider: 'hidden',/*文本编辑工具条*/
       textSiderop:0,
-      imagesSider: 'hidden',
+      imagesSider: 'hidden',/*图片编辑工具条*/
       imagesSiderop:0,
-      videoSider: 'hidden',
+      videoSider: 'hidden',/*视频编辑工具条*/
       videoSiderop:0,
-      sectionlist:[],
-      count:0,
-      textlist:[],
-      textAlign:"left",
-      fontSize:16,
-      lineHeight:1,
-      letterSpacing:2,
-      textColor:"#000",
-      backgroundColor:"#fff",
-      rotation:0,
-      borderWidth:1,
-      borderRadius:0,
-      borderStyle:"solid",
-      borderColor:"#000",
-      textpadding:4,
-
+      sectionlist:[],/*幻灯片队列*/
+      count:0,/*文本框数*/
+      textlist:[],/*文本框队列*/
+      textAlign:[],//以下是文本框编辑参数
+      fontSize:[],
+      lineHeight:[],
+    /*  letterSpacing:3,
+      textColor:4,
+      backgroundColor:5,
+      rotation:6,
+      borderWidth:7,
+      borderRadius:8,
+      borderStyle:9,
+      borderColor:10,
+      textpadding:11,*/
+      textareaKey:0,
+      textarea:[],
 		};
-    this.siderDisplay = this.siderDisplay.bind(this);
-    this.addTextarea = this.addTextarea.bind(this);
 	};
 
   /*新建幻灯片*/
@@ -60,41 +59,83 @@ export default class PCEditor extends React.Component{
     page.setAttribute("dir",direction);
 
   }
-
-  /*显示编辑工具栏o*/
-  siderDisplay(e){
+  /*展示工具条o*/
+  showOriginSider(e){
+    e.stopPropagation();
+    e.preventDefault();
     this.setState({
-      originSider:'hidden',
-      originSiderop:1
+      originSider:'visible',
+      originSiderop:1,
+      textSider: 'hidden',/*文本编辑工具条*/
+      textSiderop:0,
+      imagesSider: 'hidden',/*图片编辑工具条*/
+      imagesSiderop:0,
+      videoSider: 'hidden',/*视频编辑工具条*/
+      videoSiderop:0,
     });
-    if(e.target.id == 'text'){
-      this.setState({
-        textSider: 'visible',
-        textSiderop:1,
-      });
-    }else if(e.target.id == 'images'){
-      this.setState({
-        imagesSider: 'visible',
-        imagesSiderop:1
-      });
-    }else if(e.target.id == 'images'){
-      this.setState({
-        videoSider: 'visible',
-        videoSiderop:1
-      });
-    }
   }
+
+  showTextSider(e){
+    this.setState({
+      textSider:'visible',
+      textSiderop:1,
+      originSider: 'hidden',
+      originSiderop:0,
+      imagesSider: 'hidden',
+      imagesSiderop:0,
+      videoSider: 'hidden',
+      videoSiderop:0,
+    });
+  }
+  showimageSider(e){
+    this.setState({
+      imagesSider:'visible',
+      imagesSiderop:1,
+      originSider: 'hidden',
+      originSiderop:0,
+      textSider: 'hidden',
+      textSiderop:0,
+      videoSider: 'hidden',
+      videoSiderop:0,
+    });
+  }
+  showVideoSider(e){
+    this.setState({
+      videoSider:'visible',
+      videoSiderop:1,
+      originSider: 'hidden',
+      originSiderop:0,
+      textSider: 'hidden',
+      textSiderop:0,
+      imagesSider: 'hidden',
+      imagesSiderop:0,
+    });
+  }
+/************************************************************************/
+/*文本编辑*/
 
   /*新建文本框o*/
   addTextarea(e){
-       let textlist = this.state.textlist;
-       let count = this.state.count;
-       textlist.push(text);
-       this.setState({textlist:textlist,count:count+1});
+     let textlist = this.state.textlist;
+     let count = this.state.count;
+     let textarea = this.state.textarea;
+     let style = ["left",16,1,2,"#000","#fff",0,1,0,"solid","#000",4];
+     textarea.push(style);
+     textlist.push(count);
+     this.setState({textlist:textlist,count:count+1,textarea:textarea});
      }
+   /*新增文本框并显示文本编辑工具条*/
  showtext(e){
-   this.siderDisplay(e);
+   this.showTextSider(e);
    this.addTextarea(e);
+ }
+ showvideo(e){
+   this.siderDisplay(e);
+   this.addVideo(e);
+ }
+ showimage(e){
+   this.siderDisplay(e);
+   this.addimage(e);
  }
 /*获得鼠标选中的文本*/
   getSelectedText(e){
@@ -115,46 +156,89 @@ export default class PCEditor extends React.Component{
       return e.value.substring(start, end);
      }
   }
+
+  /*获得当前焦点所在文本框的key*/
+  getTextareaKey(e){
+    let key = parseInt(e.target.id);
+    this.setState({textareaKey:key});
+  }
   /*编辑文本alighment0*/
   getTextAlignKey(e){
+    let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
     switch(e.target.value)
     {
     case "left":
-      this.setState({textAlign:"left"});
+      textarea[textareaKey][0] = "left";
+      this.setState({textarea:textarea});
       break;
     case "right":
-      this.setState({textAlign:"right"});
+      textarea[textareaKey][0] = "right";
+      this.setState({textarea:textarea});
       break;
     case "center":
-      this.setState({textAlign:"center"});
-      console.log(this.state.textAlign);
+      textarea[textareaKey][0] = "center";
+      this.setState({textarea:textarea});
       break;
     case "justify":
-      this.setState({textAlign:"justify"});
+      textarea[textareaKey][0] = "justify";
+      this.setState({textarea:textarea});
       break;
   };
 };
     /*文字大小*/
     fontSizeChange(e){
-      this.setState({fontSize:e});
+      console.log(this.state.textareaKey);
+      let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
+      if(textarea[textareaKey]){
+      textarea[textareaKey][1]=e;
+      this.setState({textarea:textarea});}
+
     }
     /*行高*/
     lineheightChange(e){
-      this.setState({lineHeight:e})
+      let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
+      textarea[textareaKey][2]=e;
+      this.setState({textarea:textarea});
     }
     /*letterSpacing*/
     letterSpacingChange(e){
-      this.setState({letterSpacing:e})
+      let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
+      textarea[textareaKey][3]=e;
+      this.setState({textarea:textarea});
     }
+    /*旋转*/
     rotationChange(e){
-      this.setState({rotation:e})
+      let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
+      textarea[textareaKey][6]=e;
+      this.setState({textarea:textarea});
     }
+    /*边框宽度*/
     borderWidthChange(e){
-      this.setState({borderWidth:e})
+      let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
+      textarea[textareaKey][7]=e;
+      this.setState({textarea:textarea});
     }
+    /*边框角圆*/
     borderRadiusChange(e){
-      this.setState({borderRadius:e})
+      let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
+      textarea[textareaKey][8]=e;
+      this.setState({textarea:textarea});
     }
+    textColorChange(color){
+      let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
+      textarea[textareaKey][4]=color.hex;
+      this.setState({textarea:textarea});
+    };
+    backgroundColorChange(color){
+      let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
+      textarea[textareaKey][5]=color.hex;
+      this.setState({textarea:textarea});
+    };
+    borderColorChange(color){
+      let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
+      textarea[textareaKey][10]=color.hex;
+      this.setState({textarea:textarea});
+    };
 addRightSlides(){
   newPage("pageright");
 };
@@ -165,12 +249,25 @@ addDownSlides(){
 
 render(){
   const pageNum = 0;
+  let textarea = this.state.textarea;
+  let key = this.state.textareaKey;
+  let currentTextStyle = textarea[key];
+  let textlist = this.state.textlist;
+  let showTextlist = textlist ?
+  textlist.map((text,index)=>(
+    <PCEditorTextarea key={index}
+    getTextareaKey = {this.getTextareaKey.bind(this)}
+    textarea={textarea[index]} count = {text}
+    showTextSider={this.showTextSider.bind(this)}/>
+   ))
+     :
+     ''
 
     return (
         <div>
         <PCHeader/>
             <Layout>
-              <Sider class="sider" width="80" style={{ overflow: 'scroll', height: '100vh', position:'fixed', left: 0 }}>
+              <Sider class="sider" width="80" style={{ overflow: 'scroll', height: '90vh', position:'fixed', left: 0 }}>
                     <Button htmlType="button" id="tool-btn1" title="预览">
                       <Icon class="tool-icon" type="scan" />
                     </Button>
@@ -190,19 +287,20 @@ render(){
                       <Icon class="tool-icon" type="setting" />
                     </Button>
               </Sider>
-              <Sider class="sider" id="func-menu" width="210" style={{ visibility:this.state.originSider,opacity:this.state.originSiderop, overflow: 'scroll', height: '100vh', position: 'fixed', left: 80,transition: 'opacity 0.5s linear'}}>
+              <Sider class="sider" id="func-menu" width="210" style={{ visibility:this.state.originSider,opacity:this.state.originSiderop, overflow: 'scroll', height: '90vh', position: 'fixed', left: 80,transition: 'opacity 0.5s linear'}}>
                 <Button htmlType="button" id="text" title="添加文本"  onClick={this.showtext.bind(this)}>
                   <Icon class="tool-icon" type="file-text" />
                 </Button>
-                <Button htmlType="button" id="images" title="添加图片"  onClick={this.siderDisplay.bind(this)}>
+                <Button htmlType="button" id="images" title="添加图片"  onClick={this.showimage.bind(this)}>
                     <Icon class="tool-icon" type="picture" />
                 </Button>
-                <Button htmlType="button" id="video" title="添加视频" onClick={this.siderDisplay.bind(this)}>
+                <Button htmlType="button" id="video" title="添加视频" onClick={this.showvideo.bind(this)}>
                     <Icon class="tool-icon" type="video-camera" />
                 </Button>
               </Sider>
-              <Sider class="sider" id="text-menu" width="210" style={{visibility:this.state.textSider,opacity:this.state.textSiderop, overflow: 'scroll', height: '100vh', position: 'fixed', left: 80,transition:'opacity 0.5s linear', }}>
+              <Sider class="sider" id="text-menu" width="210" style={{visibility:this.state.textSider,opacity:this.state.textSiderop, overflow: 'scroll', height: '90vh', position: 'fixed', left: 80,transition:'opacity 0.5s linear', }}>
                   <PCEditorText
+                  showOriginSider={this.showOriginSider.bind(this)}
                   getTextAlignKey={this.getTextAlignKey.bind(this)}
                   fontSizeChange={this.fontSizeChange.bind(this)}
                   lineheightChange={this.lineheightChange.bind(this)}
@@ -210,25 +308,22 @@ render(){
                   rotationChange={this.rotationChange.bind(this)}
                   borderWidthChange={this.borderWidthChange.bind(this)}
                   borderRadiusChange={this.borderRadiusChange.bind(this)}
+                  textColorChange={this.textColorChange.bind(this)}
+                  borderColorChange={this.borderColorChange.bind(this)}
+                  backgroundColorChange={this.backgroundColorChange.bind(this)}
                   />
               </Sider>
-              <Sider class="sider" id="image-menu" width="200" style={{visibility:this.state.imagesSider,opacity:this.state.imagesSiderop, overflow: 'scroll', height: '100vh', position: 'fixed', left: 80 ,transition: 'opacity 0.5s linear',}}>
+              <Sider class="sider" id="image-menu" width="200" style={{visibility:this.state.imagesSider,opacity:this.state.imagesSiderop, overflow: 'scroll', height: '90vh', position: 'fixed', left: 80 ,transition: 'opacity 0.5s linear',}}>
                 <PCEditorPicture/>
               </Sider>
-              <Sider class="sider" id="vedio-menu" width="200" style={{visibility:this.state.videoSider,opacity:this.state.videoSiderop, overflow: 'scroll', height: '100vh', position: 'fixed', left: 80,transition:'opacity 0.5s linear', }}>
+              <Sider class="sider" id="vedio-menu" width="200" style={{visibility:this.state.videoSider,opacity:this.state.videoSiderop, overflow: 'scroll', height: '90vh', position: 'fixed', left: 80,transition:'opacity 0.5s linear', }}>
                 <PCEditorVideo/>
               </Sider>
               <Content style={{position:'fixed',overflow:'auto', left:300,width:"74%",height:"80%",margin: '24px 16px', padding: 24, background: '#eee', minHeight: 280 }}>
                 <article>
                   <div id="slides">
                     <section style={{display:'block',position:'relative'}}>
-                      <PCEditorTextarea count={this.state.count} textlist={this.state.textlist}
-                      fontSize={this.state.fontSize}
-                      textAlign={this.state.textAlign} textpadding={this.state.textpadding}
-                       letterSpacing={this.state.letterSpacing} lineHeight={this.state.lineHeight}
-                      backgroundColor={this.state.backgroundColor} rotation={this.state.rotation}
-                      borderWidth={this.state.borderWidth} borderStyle={this.state.borderStyle}
-                       borderRadius={this.state.borderRadius} borderColor={this.state.borderColor}/>
+                      {showTextlist}
                     </section>
 
 

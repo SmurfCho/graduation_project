@@ -10,12 +10,12 @@ import {
   Slider,
   InputNumber,
   Popover,
-  Radio
+  Radio,
+  Input,
 } from 'antd';
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const { Footer,Content,Sider } = Layout;
-const handleColorChange = ({ hex }) => console.log(hex);
 export default class PCEditorText extends React.Component{
   constructor(){
 		super();
@@ -27,7 +27,11 @@ export default class PCEditorText extends React.Component{
       rotationValue:0,
       borderWidthValue:1,
       borderRadiusValue:0,
+      textColorValue:"#000",
+      backgroundColorValue:"#fff",
+      borderColorValue:"#000",
       displayColorPicker: false,
+      background:"",
 		};
 	};
 
@@ -94,16 +98,44 @@ handleborderRadiusChange(e){
   this.props.borderRadiusChange(e);
   this.borderRadiusChange(e);
 }
+textColorValueChange(color){
+  this.setState({textColorValue:color.hex});
+}
+handleTextColorChange(color,e){
+  this.textColorValueChange(color);
+  this.props.textColorChange(color);
+}
+backgroundColorValueChange(color){
+  this.setState({backgroundColorValue:color.hex});
+}
+handleBackgroundColorChange(color,e){
+  this.backgroundColorValueChange(color);
+  this.props.backgroundColorChange(color);
+}
+borderColorValueChange(color){
+  this.setState({borderColorValue:color.hex});
+}
+handleBorderColorChange(color,e){
+  this.borderColorValueChange(color);
+  this.props.borderColorChange(color);
+}
+
 render(){
+
     return (
         <div>
+        <div class='back' style={{textAlign:"center"}}>
+        <Button type="Dash" onClick={this.props.showOriginSider}>
+          <Icon type="left" />Backward
+        </Button>
+        </div>
           <div class='text-func'>
             <p>Text Alignment</p>
             <RadioGroup onChange={this.props.getTextAlignKey} defaultValue="left">
-              <RadioButton value="left"><img src="../../../src/images/text-left.svg" style={{height:18,width:18}} title="左对齐"/></RadioButton>
-              <RadioButton value="right"><img src="../../../src/images/text-right.svg" style={{height:18,width:18}} title="右对齐"/></RadioButton>
-              <RadioButton value="center"><img src="../../../src/images/text-center.svg" style={{height:18,width:18}} title="居中对齐"/></RadioButton>
-              <RadioButton value="justify"><img src="../../../src/images/text-justify.svg" style={{height:18,width:18}} title="两边对齐"/></RadioButton>
+              <RadioButton style={{height:30,width:40,padding:"6px 0px",textAlign:"center"}} value="left"><img src="../../../src/images/text-left.svg" style={{height:18,width:20}} title="左对齐"/></RadioButton>
+              <RadioButton style={{height:30,width:40,padding:"6px 0px",textAlign:"center"}} value="right"><img src="../../../src/images/text-right.svg" style={{height:18,width:20}} title="右对齐"/></RadioButton>
+              <RadioButton style={{height:30,width:40,padding:"6px 0px",textAlign:"center"}} value="center"><img src="../../../src/images/text-center.svg" style={{height:18,width:20}} title="居中对齐"/></RadioButton>
+              <RadioButton style={{height:30,width:40,padding:"6px 0px",textAlign:"center"}} value="justify"><img src="../../../src/images/text-justify.svg" style={{height:18,width:20}} title="两边对齐"/></RadioButton>
             </RadioGroup>
 
           </div>
@@ -160,13 +192,13 @@ render(){
           </div>
           <div class='text-func'>
             <p>Text Color</p>
-            <Popover placement="right"  content={<SketchPicker color="#333" onChangeComplete={ handleColorChange } type="sketch" />} trigger="click">
+            <Popover placement="right"  content={<SketchPicker color={this.state.textColorValue}  onChangeComplete={this.handleTextColorChange.bind(this)} type="sketch" />} trigger="click">
               <Button>Pick Color</Button>
             </Popover>
           </div>
           <div class='text-func'>
             <p>Background Color</p>
-            <Popover placement="right"  content={<SketchPicker type="sketch" />} trigger="click">
+            <Popover placement="right"  content={<SketchPicker color={this.state.backgroundColorValue}  onChangeComplete={this.handleBackgroundColorChange.bind(this)} type="sketch" />} trigger="click">
               <Button>Pick Color</Button>
             </Popover>
           </div>
@@ -174,12 +206,12 @@ render(){
             <p>Rotation</p>
             <Row>
               <Col span={12}>
-                <Slider min={1} max={100} onChange={this.handlerotationChange.bind(this)} value={this.state.rotationValue} />
+                <Slider min={0} max={360} onChange={this.handlerotationChange.bind(this)} value={this.state.rotationValue} />
               </Col>
               <Col span={2}>
                 <InputNumber
-                  min={1}
-                  max={100}
+                  min={0}
+                  max={360}
                   style={{ marginLeft: 16,width:45,display:'inline-block' }}
                   value={this.state.rotationValue}
                   onChange={this.handlerotationChange.bind(this)}
@@ -223,7 +255,7 @@ render(){
           </div>
           <div class='text-func'>
             <p>border color</p>
-            <Popover placement="right"  content={<SketchPicker type="sketch" />} trigger="click">
+            <Popover placement="right"  content={<SketchPicker color={this.state.borderColorValue}  onChangeComplete={this.handleBorderColorChange.bind(this)} type="sketch"/>} trigger="click">
               <Button>Pick Color</Button>
             </Popover>
           </div>
