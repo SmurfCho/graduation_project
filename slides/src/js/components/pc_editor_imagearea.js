@@ -43,7 +43,8 @@ export default class PCEditorImagearea extends React.Component {
       borderRadius:imagearea[3],
       borderColor:imagearea[5],
     }
-
+    let imageObjectList = this.props.imageObjectList;
+    let key = this.props.key;
     return (
       <div style={{transform:"rotate("+imagearea[0]+"deg)",
       transformOrigin:"50%",height:this.state.height,width:this.state.width}}
@@ -59,7 +60,7 @@ export default class PCEditorImagearea extends React.Component {
           });
         }}
         >
-          <img  autoFocus="autofocus" id = {this.props.count} onClick={this.allFocus.bind(this)}
+          <img  autoFocus="autofocus" src={[key]} id = {this.props.count} onClick={this.allFocus.bind(this)}
           style={imageStyle} title="点击编辑图片"/>
         </Rnd>
       </div>

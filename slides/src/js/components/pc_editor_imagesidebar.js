@@ -12,8 +12,6 @@ import {
   Popover,
   Radio,
   Input,
-  Upload,
-  Modal
 } from 'antd';
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
@@ -23,8 +21,6 @@ export default class PCEditorImagesidebar extends React.Component{
   constructor(){
 		super();
 		this.state = {
-      previewVisible: false,
-      previewImage: '',
       rotationValue:0,
       borderWidthValue:1,
       borderRadiusValue:0,
@@ -32,14 +28,6 @@ export default class PCEditorImagesidebar extends React.Component{
       displayColorPicker: false,
 		};
 	};
-  handleCancel(){this.setState({ previewVisible: false })}
-
- handlePreview(file){
-   this.setState({
-     previewImage: file.url || file.thumbUrl,
-     previewVisible: true,
-   });
- }
 
 
  rotationChange(e){
@@ -77,7 +65,6 @@ export default class PCEditorImagesidebar extends React.Component{
    this.props.iborderColorChange(color);
  }
 render(){
-  const { previewVisible, previewImage} = this.state;
   const imageObjectList = this.props.imageObjectList;
     const uploadButton = (
       <div>
@@ -92,20 +79,7 @@ render(){
             <Icon type="left" />Backward
           </Button>
           </div>
-          <div class="image-funcs" style={{textAlign:"center",marginTop:10}}>
-            <Upload
-              action=""
-              listType="picture-card"
-              fileList={imageObjectList}
-              onPreview={this.handlePreview}
-              onChange={this.props.uploadImage}
-            >
-              {imageObjectList.length >= 1 ? null : uploadButton}
-            </Upload>
-            <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
-              <img alt="example" style={{ width: '100%' }} src={previewImage} />
-            </Modal>
-          </div>
+
           <div class='image-func'>
             <p>Rotation</p>
             <Row>

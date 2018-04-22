@@ -33,17 +33,18 @@ export default class PCEditor extends React.Component{
       count:0,/*文本框数*/
       textlist:[],/*文本框队列*/
       imageCount:0,
-      imagelist:[],/*图片队列*/
+      imagelist:[],/*图片框队列*/
       videoCount:0,
-      videolist:[],/*图片队列*/
+      videolist:[],/*视频框队列*/
       /*textAlign:[],//以下是文本框编辑参数 fontSize:[],lineHeight:[],letterSpacing:3,textColor:4,backgroundColor:5,  rotation:6,borderWidth:7,borderRadius:8,borderStyle:9,borderColor:10,textpadding:11,*/
       textareaKey:0,
-      textarea:[],
+      textarea:[],//文本样式队列
       imageareaKey:0,
-      imagearea:[],
+      imagearea:[],//图片样式队列
       videoareaKey:0,
-      videoarea:[],
+      videoarea:[],//视频样式队列
       imageObjectList: [],//图片list
+      videoObjectList:[],
 		};
 	};
 
@@ -141,10 +142,17 @@ export default class PCEditor extends React.Component{
     this.setState({imagelist:imagelist,imageCount:count+1,imagearea:imagearea});
     }
     /*image upload*/
-    uploadImage({ imageObjectList }){
-      this.setState({ imageObjectList });
+    uploadImage({ file, fileList }){
+      let imageObjectList = this.state.imageObjectList;
+      let url = file.url;
+      imageObjectList.push(url);
+      this.setState(imageObjectList:imageObjectList)
+      if (file.status !== 'uploading') {
+      console.log(file, fileList);
     }
- showimage(e){
+  }
+
+  showimage(e){
    this.showImageSider(e);
    this.addImage(e);
  }
@@ -158,6 +166,15 @@ export default class PCEditor extends React.Component{
     videolist.push(count);
     this.setState({videolist:videolist,videoCount:count+1,videoarea:videoarea});
     }
+  uploadVideo({ file, fileList }){
+    let videoObjectList = this.state.videoObjectList;
+    let url = file.url;
+    videoObjectList.push(url);
+    this.setState(videoObjectList:videoObjectList)
+    if (file.status !== 'uploading') {
+    console.log(file, fileList);
+    }
+  }
  showvideo(e){
    this.showVideoSider(e);
    this.addVideo(e);
@@ -208,8 +225,8 @@ export default class PCEditor extends React.Component{
       textarea[textareaKey][0] = "justify";
       this.setState({textarea:textarea});
       break;
+    };
   };
-};
     /*文字大小*/
     fontSizeChange(e){
       console.log(this.state.textareaKey);
@@ -352,11 +369,14 @@ render(){
    let imageareaKey = this.state.imageareaKey;
    let currentImageStyle = imagearea[imageareaKey];
    let imagelist = this.state.imagelist;
+   let imageObjectList = this.state.imageObjectList;
+   let videoObjectList = this.state.videoObjectList;
    let showImagelist = imagelist ?
    imagelist.map((image,index)=>(
      <PCEditorImagearea key={index}
      getImageareaKey = {this.getImageareaKey.bind(this)}
      imagearea={imagearea[index]} count = {image}
+     imageObjectList={imageObjectList}
      showImageSider={this.showImageSider.bind(this)}/>
     ))
       :
@@ -370,6 +390,7 @@ render(){
       <PCEditorVideoarea key={index}
       getVideoareaKey = {this.getVideoareaKey.bind(this)}
       videoarea={videoarea[index]} count = {video}
+      videoObjectList={videoObjectList}
       showVideoSider={this.showVideoSider.bind(this)}/>
      ))
        :
@@ -402,14 +423,22 @@ render(){
                 <Button htmlType="button" id="text" title="添加文本"  onClick={this.showtext.bind(this)}>
                   <Icon class="tool-icon" type="file-text" />
                 </Button>
-                <Upload accept="image" onChange={this.uploadImage.bind(this)}>
+                <Upload
+                accept="image"
+                action= ''
+                onChange={this.uploadImage.bind(this)}>
                 <Button htmlType="button" id="images" title="添加图片"  onClick={this.showimage.bind(this)}>
                     <Icon class="tool-icon" type="picture" />
                 </Button>
                 </Upload>
+                <Upload
+                accept="vedio"
+                action= ''
+                onChange={this.uploadVideo.bind(this)}>
                 <Button htmlType="button" id="video" title="添加视频" onClick={this.showvideo.bind(this)}>
                     <Icon class="tool-icon" type="video-camera" />
                 </Button>
+                </Upload>
               </Sider>
               <Sider class="sider" id="text-menu" width="210" style={{visibility:this.state.textSider,opacity:this.state.textSiderop, overflow: 'scroll', height: '90vh', position: 'fixed', left: 80,transition:'opacity 0.5s linear', }}>
                   <PCEditorTextsidebar
@@ -433,7 +462,6 @@ render(){
                 iborderWidthChange={this.iborderWidthChange.bind(this)}
                 iborderRadiusChange={this.iborderRadiusChange.bind(this)}
                 iborderColorChange={this.iborderColorChange.bind(this)}
-                uploadImage={this.uploadImage.bind(this)}
                 imageObjectList={this.state.imageObjectList}
                 />
               </Sider>
@@ -445,10 +473,10 @@ render(){
                 vborderRadiusChange={this.vborderRadiusChange.bind(this)}
                 vborderColorChange={this.vborderColorChange.bind(this)}/>
               </Sider>
-              <Content style={{position:'fixed',overflow:'auto', left:300,width:"74%",height:"80%",margin: '24px 16px', padding: 24, background: '#eee', minHeight: 280 }}>
+              <Content style={{position:'fixed',overflow:'auto', left:300,width:"74%",height:"90%",margin: '24px 16px', padding: 0, background: '#eee', minHeight: 280 }}>
                 <article>
                   <div id="slides">
-                    <section style={{display:'block',position:'relative'}}>
+                    <section style={{display:'block',position:'relative',margin:'auto',overfloat:'hidden',width:'800',height:'500',backgroundColor:'#fff'}}>
                       {showTextlist}
                       {showImagelist}
                       {showVideolist}

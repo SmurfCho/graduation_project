@@ -43,6 +43,8 @@ export default class PCEditorVideoarea extends React.Component {
       borderRadius:videoarea[3],
       borderColor:videoarea[5],
     }
+    let videoObjectList = this.props.videoObjectList;
+    let key = this.props.key;
 
     return (
       <div style={{transform:"rotate("+videoarea[0]+"deg)",
@@ -61,7 +63,7 @@ export default class PCEditorVideoarea extends React.Component {
         >
           <video id = {this.props.count} onClick={this.allFocus.bind(this)}
           style={videoStyle} title="点击编辑视频">
-          <source src=""  type="video/mp4"/>
+          <source src={videoObjectList[key]}  type="video/mp4"/>
           </video>
         </Rnd>
       </div>
