@@ -1,10 +1,20 @@
 
-#tool-btn1,#tool-btn2,#tool-btn3,#tool-btn4,#tool-btn5,#tool-btn6,#text,#images,#video{
+#tool-btn1,#tool-btn2,#tool-btn3,#tool-btn4,#tool-btn5,#tool-btn6{
   position: relative;
   display: block;
   margin:auto;
   height: 60px;
   width: 60px;
+  padding:5px;
+  margin-top: 10px;
+}
+#text,#images,#video{
+  position: relative;
+  display: block;
+  margin:auto;
+  height: 60px;
+  width: 200px;
+  text-align: center;
   padding:5px;
   margin-top: 10px;
 }
@@ -41,6 +51,16 @@
        }
 
 .text-func{
+  padding:10px;
+  font-size: 16px;
+  color:#fff;
+}
+.image-func{
+  padding:10px;
+  font-size: 16px;
+  color:#fff;
+}
+.video-func{
   padding:10px;
   font-size: 16px;
   color:#fff;

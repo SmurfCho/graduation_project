@@ -16,11 +16,10 @@ import {
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const { Footer,Content,Sider } = Layout;
-export default class PCEditorText extends React.Component{
+export default class PCEditorTextsidebar extends React.Component{
   constructor(){
 		super();
 		this.state = {
-      inputValue: 1,
       fontValue:16,
       lineHeightValue:1,
       letterSpacingValue:1,
@@ -35,11 +34,7 @@ export default class PCEditorText extends React.Component{
 		};
 	};
 
-  handleChange(e){
-  this.setState({
-    inputValue: e
-  });
-}
+
 
 fontchange(e){
   this.setState({

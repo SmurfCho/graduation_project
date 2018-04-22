@@ -28,7 +28,7 @@ export default class PCEditorTextarea extends React.Component {
   }
   render() {
     let textarea = this.props.textarea;
-    let style = {
+    let rndstyle = {
       height:500,
       width:500,
       position:"relative",
@@ -66,10 +66,12 @@ export default class PCEditorTextarea extends React.Component {
        ''*/
 
     return (
-      <div style={{transform:"rotate("+textarea[6]+"deg)",width:this.state.width,height:this.state.height}}
+      <div style={{
+      transform:"rotate("+textarea[6]+"deg)!important",
+      transformOrigin:"50%",height:this.state.height,width:this.state.width}}
       >
         <Rnd
-        style={style} disableDragging={this.state.disableDragging}
+        style={rndstyle} disableDragging={this.state.disableDragging}
         size={{ width: this.state.width, height: this.state.height }}
         onDragStop={(e, d) => { this.setState({ x: d.x, y: d.y }) }}
         onResize={(e, direction, ref, delta, position) => {
