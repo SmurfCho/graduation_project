@@ -44,7 +44,7 @@ export default class PCEditorImagearea extends React.Component {
       borderColor:imagearea[5],
     }
     let imageObjectList = this.props.imageObjectList;
-    let key = this.props.key;
+    let key = this.props.imagekey;/*当前图片索引*/
     return (
       <div style={{transform:"rotate("+imagearea[0]+"deg)",
       transformOrigin:"50%",height:this.state.height,width:this.state.width}}

@@ -44,7 +44,7 @@ export default class PCEditorVideoarea extends React.Component {
       borderColor:videoarea[5],
     }
     let videoObjectList = this.props.videoObjectList;
-    let key = this.props.key;
+    let key = this.props.videokey;/*当前视频索引*/
 
     return (
       <div style={{transform:"rotate("+videoarea[0]+"deg)",
