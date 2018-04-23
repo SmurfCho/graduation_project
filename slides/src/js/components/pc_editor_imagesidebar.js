@@ -98,7 +98,7 @@ render(){
             </Row>
           </div>
           <div class='image-func'>
-            <p>Oacity</p>
+            <p>Opacity</p>
             <Row>
               <Col span={12}>
                 <Slider min={0} max={360} onChange={this.handlerotationChange.bind(this)} value={this.state.rotationValue} />

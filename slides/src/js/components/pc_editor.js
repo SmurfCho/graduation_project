@@ -226,55 +226,55 @@ export default class PCEditor extends React.Component{
   };
     /*文字大小*/
     fontSizeChange(e){
-      let textarea = this.state.textarea[sectionIndex],textareaKey = this.state.textareaKey;
-      if(textarea[textareaKey]){
-      textarea[textareaKey][1]=e;
+      let textarea=this.state.textarea,textareaKey = this.state.textareaKey;
+      if(textarea[sectionIndex][textareaKey]){
+      textarea[sectionIndex][textareaKey][1]=e;
       this.setState({textarea:textarea});}
 
     }
     /*行高*/
     lineheightChange(e){
-      let textarea = this.state.textarea[sectionIndex],textareaKey = this.state.textareaKey;
-      textarea[textareaKey][2]=e;
+      let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
+      textarea[sectionIndex][textareaKey][2]=e;
       this.setState({textarea:textarea});
     }
     /*letterSpacing*/
     letterSpacingChange(e){
-      let textarea = this.state.textarea[sectionIndex],textareaKey = this.state.textareaKey;
-      textarea[textareaKey][3]=e;
+      let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
+      textarea[sectionIndex][textareaKey][3]=e;
       this.setState({textarea:textarea});
     }
     /*旋转*/
     rotationChange(e){
-      let textarea = this.state.textarea[sectionIndex],textareaKey = this.state.textareaKey;
-      textarea[textareaKey][6]=e;
+      let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
+      textarea[sectionIndex][textareaKey][6]=e;
       this.setState({textarea:textarea});
     }
     /*边框宽度*/
     borderWidthChange(e){
-      let textarea = this.state.textarea[sectionIndex],textareaKey = this.state.textareaKey;
-      textarea[textareaKey][7]=e;
+      let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
+      textarea[sectionIndex][textareaKey][7]=e;
       this.setState({textarea:textarea});
     }
     /*边框角圆*/
     borderRadiusChange(e){
-      let textarea = this.state.textarea[sectionIndex],textareaKey = this.state.textareaKey;
-      textarea[textareaKey][8]=e;
+      let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
+      textarea[sectionIndex][textareaKey][8]=e;
       this.setState({textarea:textarea});
     }
     textColorChange(color){
-      let textarea = this.state.textarea[sectionIndex],textareaKey = this.state.textareaKey;
-      textarea[textareaKey][4]=color.hex;
+      let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
+      textarea[sectionIndex][textareaKey][4]=color.hex;
       this.setState({textarea:textarea});
     };
     backgroundColorChange(color){
-      let textarea = this.state.textarea[sectionIndex],textareaKey = this.state.textareaKey;
-      textarea[textareaKey][5]=color.hex;
+      let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
+      textarea[sectionIndex][textareaKey][5]=color.hex;
       this.setState({textarea:textarea});
     };
     borderColorChange(color){
-      let textarea = this.state.textarea[sectionIndex],textareaKey = this.state.textareaKey;
-      textarea[textareaKey][10]=color.hex;
+      let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
+      textarea[sectionIndex][textareaKey][10]=color.hex;
       this.setState({textarea:textarea});
     };
     /*图片样式*/
