@@ -28,7 +28,7 @@ export default class PCEditorVideoarea extends React.Component {
       display: "block",
       border: 'solid 1px #ddd',
       background: '#f0f0f0',
-      opacity:videoarea[1],
+      opacity:videoarea[1]*0.1,
       borderRadius:videoarea[3],
     };
     let videoStyle={

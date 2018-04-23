@@ -28,7 +28,7 @@ export default class PCEditorImagearea extends React.Component {
       display: "block",
       border: 'solid 1px #ddd',
       background: '#f0f0f0',
-      opacity:imagearea[1],
+      opacity:imagearea[1]*0.1,
       borderRadius:imagearea[3],
     };
     let imageStyle={

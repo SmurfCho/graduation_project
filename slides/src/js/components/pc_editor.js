@@ -32,18 +32,18 @@ export default class PCEditor extends React.Component{
       videoSiderop:0,
       sectionlist:[],/*幻灯片队列*/
       count:0,/*文本框数*/
-      textlist:[],/*文本框队列,保存文字内容*/
+      textlist:[[]],/*文本框队列,保存文字内容*/
       imageCount:0,
-      imagelist:[],/*图片框队列，保存图片url*/
+      imagelist:[[]],/*图片框队列，保存图片url*/
       videoCount:0,
-      videolist:[],/*视频框队列，保存视频URL*/
+      videolist:[[]],/*视频框队列，保存视频URL*/
       /*textAlign:[],//以下是文本框编辑参数 fontSize:[],lineHeight:[],letterSpacing:3,textColor:4,backgroundColor:5,  rotation:6,borderWidth:7,borderRadius:8,borderStyle:9,borderColor:10,textpadding:11,*/
       textareaKey:0,//section中被点击的textarea的key
       textarea:[[]],//文本样式队列
       imageareaKey:0,
-      imagearea:[],//图片样式队列
+      imagearea:[[]],//图片样式队列
       videoareaKey:0,
-      videoarea:[],//视频样式队列
+      videoarea:[[]],//视频样式队列
       imageObjectList: [],//图片list
       videoObjectList:[],
 
@@ -119,7 +119,7 @@ export default class PCEditor extends React.Component{
      let textarea = this.state.textarea;
      let style = ["left",16,1,2,"#000","#fff",0,1,0,"solid","#000",4];
      textarea[sectionIndex].push(style);
-     textlist.push(count);
+     textlist[sectionIndex].push(count);
      this.setState({textlist:textlist,count:count+1,textarea:textarea});
      }
    /*新增文本框并显示文本编辑工具条*/
@@ -133,9 +133,9 @@ export default class PCEditor extends React.Component{
     let imagelist = this.state.imagelist;
     let count = this.state.imageCount;
     let imagearea = this.state.imagearea;
-    let style = [0,1,0,0,"solid","#000"];/*rotation,opacity,borderWidth,borderRadius,borderStyle,borderColor*/
-    imagearea.push(style);
-    imagelist.push(count);
+    let style = [0,10,0,0,"solid","#000"];/*rotation,opacity,borderWidth,borderRadius,borderStyle,borderColor*/
+    imagearea[sectionIndex].push(style);
+    imagelist[sectionIndex].push(count);
     this.setState({imagelist:imagelist,imageCount:count+1,imagearea:imagearea});
     }
     /*image upload*/
@@ -158,9 +158,9 @@ export default class PCEditor extends React.Component{
     let videolist = this.state.videolist;
     let count = this.state.videoCount;
     let videoarea = this.state.videoarea;
-    let style = [0,1,0,0,"solid","#000"];/*rotation,opacity,borderWidth,borderRadius,borderStyle,borderColor*/
-    videoarea.push(style);
-    videolist.push(count);
+    let style = [0,10,0,0,"solid","#000"];/*rotation,opacity,borderWidth,borderRadius,borderStyle,borderColor*/
+    videoarea[sectionIndex].push(style);
+    videolist[sectionIndex].push(count);
     this.setState({videolist:videolist,videoCount:count+1,videoarea:videoarea});
     }
   uploadVideo({ file, fileList }){
@@ -203,23 +203,23 @@ export default class PCEditor extends React.Component{
   }
   /*编辑文本alighment0*/
   getTextAlignKey(e){
-    let textarea = this.state.textarea[sectionIndex],textareaKey = this.state.textareaKey;
+    let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
     switch(e.target.value)
     {
     case "left":
-      textarea[textareaKey][0] = "left";
+      textarea[sectionIndex][textareaKey][0] = "left";
       this.setState({textarea:textarea});
       break;
     case "right":
-      textarea[textareaKey][0] = "right";
+      textarea[sectionIndex][textareaKey][0] = "right";
       this.setState({textarea:textarea});
       break;
     case "center":
-      textarea[textareaKey][0] = "center";
+      textarea[sectionIndex][textareaKey][0] = "center";
       this.setState({textarea:textarea});
       break;
     case "justify":
-      textarea[textareaKey][0] = "justify";
+      textarea[sectionIndex][textareaKey][0] = "justify";
       this.setState({textarea:textarea});
       break;
     };
@@ -286,24 +286,30 @@ export default class PCEditor extends React.Component{
     /*旋转*/
     irotationChange(e){
       let imagearea = this.state.imagearea,imageareaKey = this.state.imageareaKey;
-      imagearea[imageareaKey][0]=e;
+      imagearea[sectionIndex][imageareaKey][0]=e;
+      this.setState({imagearea:imagearea});
+    }
+    /*透明度*/
+    iopacityChange(e){
+      let imagearea = this.state.imagearea,imageareaKey = this.state.imageareaKey;
+      imagearea[sectionIndex][imageareaKey][1]=e;
       this.setState({imagearea:imagearea});
     }
     /*边框宽度*/
     iborderWidthChange(e){
       let imagearea = this.state.imagearea,imageareaKey = this.state.imageareaKey;
-      imagearea[imageareaKey][2]=e;
+      imagearea[sectionIndex][imageareaKey][2]=e;
       this.setState({imagearea:imagearea});
     }
     /*边框角圆*/
     iborderRadiusChange(e){
       let imagearea = this.state.imagearea,imageareaKey = this.state.imageareaKey;
-      imagearea[imageareaKey][3]=e;
+      imagearea[sectionIndex][imageareaKey][3]=e;
       this.setState({imagearea:imagearea});
     }
     iborderColorChange(color){
       let imagearea = this.state.imagearea,imageareaKey = this.state.imageareaKey;
-      imagearea[imageareaKey][5]=color.hex;
+      imagearea[sectionIndex][imageareaKey][5]=color.hex;
       this.setState({imagearea:imagearea});
     };
     /*视频样式*/
@@ -315,13 +321,19 @@ export default class PCEditor extends React.Component{
     /*旋转*/
     vrotationChange(e){
       let videoarea = this.state.videoarea,videoareaKey = this.state.videoareaKey;
-      videoarea[videoareaKey][0]=e;
+      videoarea[sectionIndex][videoareaKey][0]=e;
+      this.setState({videoarea:videoarea});
+    }
+    /*透明度*/
+    vopacityChange(e){
+      let videoarea = this.state.videoarea,videoareaKey = this.state.videoareaKey;
+      videoarea[sectionIndex][videoareaKey][1]=e;
       this.setState({videoarea:videoarea});
     }
     /*边框宽度*/
     vborderWidthChange(e){
       let videoarea = this.state.videoarea,videoareaKey = this.state.videoareaKey;
-      videoarea[videoareaKey][2]=e;
+      videoarea[sectionIndex][videoareaKey][2]=e;
       this.setState({videoarea:videoarea});
     }
     /*边框角圆*/
@@ -332,7 +344,7 @@ export default class PCEditor extends React.Component{
     }
     vborderColorChange(color){
       let videoarea = this.state.videoarea,videoareaKey = this.state.videoareaKey;
-      videoarea[videoareaKey][5]=color.hex;
+      videoarea[sectionIndex][videoareaKey][5]=color.hex;
       this.setState({videoarea:videoarea});
     };
 
@@ -353,8 +365,8 @@ render(){
   let textareaKey = this.state.textareaKey;
   let currentTextStyle = textarea[textareaKey];
   let textlist = this.state.textlist;
-  let showTextlist = textlist ?
-  textlist.map((text,index)=>(
+  let showTextlist = textlist[sectionIndex] ?
+  textlist[sectionIndex].map((text,index)=>(
     <PCEditorTextarea key={index} textkey={index}
     getTextareaKey = {this.getTextareaKey.bind(this)}
     textarea={textarea[sectionIndex][index]} count = {text}
@@ -368,11 +380,11 @@ render(){
    let imagelist = this.state.imagelist;
    let imageObjectList = this.state.imageObjectList;
    let videoObjectList = this.state.videoObjectList;
-   let showImagelist = imagelist ?
-   imagelist.map((image,index)=>(
+   let showImagelist = imagelist[sectionIndex] ?
+   imagelist[sectionIndex].map((image,index)=>(
      <PCEditorImagearea key={index} imagekey={index}
      getImageareaKey = {this.getImageareaKey.bind(this)}
-     imagearea={imagearea[index]} count = {image}
+     imagearea={imagearea[sectionIndex][index]} count = {image}
      imageObjectList={imageObjectList}
      showImageSider={this.showImageSider.bind(this)}/>
     ))
@@ -382,11 +394,11 @@ render(){
     let videoareaKey = this.state.videoareaKey;
     let currentVideoStyle = videoarea[videoareaKey];
     let videolist = this.state.videolist;
-    let showVideolist = videolist ?
-    videolist.map((video,index)=>(
+    let showVideolist = videolist[sectionIndex] ?
+    videolist[sectionIndex].map((video,index)=>(
       <PCEditorVideoarea key={index} videokey={index}
       getVideoareaKey = {this.getVideoareaKey.bind(this)}
-      videoarea={videoarea[index]} count = {video}
+      videoarea={videoarea[sectionIndex][index]} count = {video}
       videoObjectList={videoObjectList}
       showVideoSider={this.showVideoSider.bind(this)}/>
      ))
@@ -473,6 +485,7 @@ render(){
                 <PCEditorImagesidebar
                 showOriginSider={this.showOriginSider.bind(this)}
                 irotationChange={this.irotationChange.bind(this)}
+                iopacityChange={this.iopacityChange.bind(this)}
                 iborderWidthChange={this.iborderWidthChange.bind(this)}
                 iborderRadiusChange={this.iborderRadiusChange.bind(this)}
                 iborderColorChange={this.iborderColorChange.bind(this)}
@@ -483,6 +496,7 @@ render(){
                 <PCEditorVideosidebar
                 showOriginSider={this.showOriginSider.bind(this)}
                 vrotationChange={this.vrotationChange.bind(this)}
+                vopacityChange={this.vopacityChange.bind(this)}
                 vborderWidthChange={this.vborderWidthChange.bind(this)}
                 vborderRadiusChange={this.vborderRadiusChange.bind(this)}
                 vborderColorChange={this.vborderColorChange.bind(this)}/>

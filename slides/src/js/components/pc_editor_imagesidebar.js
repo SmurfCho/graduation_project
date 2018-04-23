@@ -22,6 +22,7 @@ export default class PCEditorImagesidebar extends React.Component{
 		super();
 		this.state = {
       rotationValue:0,
+      opacityValue:10,
       borderWidthValue:1,
       borderRadiusValue:0,
       borderColorValue:"#000",
@@ -38,6 +39,15 @@ export default class PCEditorImagesidebar extends React.Component{
  handlerotationChange(e){
    this.props.irotationChange(e);
    this.rotationChange(e);
+ }
+ opacityChange(e){
+   this.setState({
+     opacityValue: e
+   });
+ }
+ handleopacityChange(e){
+   this.props.iopacityChange(e);
+   this.opacityChange(e);
  }
  borderWidthChange(e){
    this.setState({
@@ -101,15 +111,15 @@ render(){
             <p>Opacity</p>
             <Row>
               <Col span={12}>
-                <Slider min={0} max={360} onChange={this.handlerotationChange.bind(this)} value={this.state.rotationValue} />
+                <Slider min={0} max={10} onChange={this.handleopacityChange.bind(this)} value={this.state.opacityValue} />
               </Col>
               <Col span={2}>
                 <InputNumber
                   min={0}
-                  max={360}
+                  max={10}
                   style={{ marginLeft: 16,width:45,display:'inline-block' }}
-                  value={this.state.rotationValue}
-                  onChange={this.handlerotationChange.bind(this)}
+                  value={this.state.opacityValue}
+                  onChange={this.handleopacityChange.bind(this)}
                 />
               </Col>
             </Row>
