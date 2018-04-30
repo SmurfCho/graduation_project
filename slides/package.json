@@ -27,6 +27,7 @@
     "react-dom": "^16.1.1",
     "react-mixin": "^4.0.0",
     "react-responsive": "^4.0.0",
+    "react-rnd": "^7.4.0",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-touch-loader": "^1.1.2",

@@ -24,7 +24,7 @@ export default class PCEditorImagearea extends React.Component {
     let rndstyle = {
       height:500,
       width:500,
-      position:"relative",
+      position:"fixed",
       display: "block",
       border: 'solid 1px #ddd',
       background: '#f0f0f0',
@@ -46,8 +46,8 @@ export default class PCEditorImagearea extends React.Component {
     let imageObjectList = this.props.imageObjectList;
     let key = this.props.imagekey;/*当前图片索引*/
     return (
-      <div style={{transform:"rotate("+imagearea[0]+"deg)",
-      transformOrigin:"50%",height:this.state.height,width:this.state.width}}
+      <div style={{transform:"translate("+this.state.x+"px,"+this.state.y+"px) rotate("+imagearea[0]+"deg)",
+      transformOrigin:"50%",height:this.state.height,width:this.state.width,position:'fixed'}}
       >
         <Rnd
         style={rndstyle} disableDragging={this.state.disableDragging}

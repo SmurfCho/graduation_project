@@ -48,6 +48,7 @@ export default class PCEditorVideoarea extends React.Component {
 
     return (
       <div style={{transform:"rotate("+videoarea[0]+"deg)",
+      position:"fixed",
       transformOrigin:"50%",height:this.state.height,width:this.state.width}}
       >
         <Rnd
