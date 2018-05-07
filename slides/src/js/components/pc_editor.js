@@ -17,7 +17,8 @@ import PCEditorVideosidebar from './pc_editor_videosidebar';
 import PCEditorTextarea from './pc_editor_textarea';
 import PCEditorImagearea from './pc_editor_imagearea';
 import PCEditorVideoarea from './pc_editor_videoarea';
-let secIndex = 0;
+let secRowIndex = 0;
+let secColIndex = 0;
 export default class PCEditor extends React.Component{
   constructor(){
 		super();
@@ -30,27 +31,28 @@ export default class PCEditor extends React.Component{
       imagesSiderop:0,
       videoSider: 'hidden',/*视频编辑工具条*/
       videoSiderop:0,
-      seclist:[],/*幻灯片队列*/
       count:0,/*文本框数*/
-      textlist:[[]],/*文本框队列,保存文字内容*/
+      textlist:[[[]]],/*文本框队列,保存文字内容*/
       imageCount:0,
-      imagelist:[[]],/*图片框队列，保存图片url*/
+      imagelist:[[[]]],/*图片框队列，保存图片url*/
       videoCount:0,
-      videolist:[[]],/*视频框队列，保存视频URL*/
+      videolist:[[[]]],/*视频框队列，保存视频URL*/
       /*textAlign:[],//以下是文本框编辑参数 fontSize:[],lineHeight:[],letterSpacing:3,textColor:4,backgroundColor:5,  rotation:6,borderWidth:7,borderRadius:8,borderStyle:9,borderColor:10,textpadding:11,*/
       textareaKey:0,//section中被点击的textarea的key
-      textarea:[[]],//文本样式队列
+      textarea:[[[]]],//文本样式队列
       imageareaKey:0,
-      imagearea:[[]],//图片样式队列
+      imagearea:[[[]]],//图片样式队列
       videoareaKey:0,
-      videoarea:[[]],//视频样式队列
+      videoarea:[[[]]],//视频样式队列
       imageObjectList: [],//图片list
       videoObjectList:[],
 
-      seclist:[0],//幻灯片队列
+      seclist:[[0]],//幻灯片队列
       secNum:0,
-      currentSecindex:0,//当前幻灯片索引
-      sectransform:['translate(0,0)',],
+      curSecRow:0,
+      curSecCol:0,
+      currentSecindex:0,//当前幻灯片索引,先行后列
+      sectransform:[[['translate(0,0)','100%']],],
       secHead:[[0,0,0,0]],//headup,headdowm,deadleft,headright
 		};
 	};
@@ -113,12 +115,10 @@ export default class PCEditor extends React.Component{
 
   /*新建文本框o*/
   addTextarea(e){
-     let textlist = this.state.textlist;
-     let count = this.state.count;
-     let textarea = this.state.textarea;
+     let {textlist,count,textarea,curSecCol,curSecRow} = this.state;
      let style = ["left",16,1,2,"#000","#fff",0,1,0,"solid","#000",4];
-     textarea[secIndex].push(style);
-     textlist[secIndex].push(count);
+     textarea[curSecCol][curSecRow].push(style);
+     textlist[curSecCol][curSecRow].push(count);
      this.setState({textlist:textlist,count:count+1,textarea:textarea});
      }
    /*新增文本框并显示文本编辑工具条*/
@@ -133,8 +133,8 @@ export default class PCEditor extends React.Component{
     let count = this.state.imageCount;
     let imagearea = this.state.imagearea;
     let style = [0,10,0,0,"solid","#000"];/*rotation,opacity,borderWidth,borderRadius,borderStyle,borderColor*/
-    imagearea[secIndex].push(style);
-    imagelist[secIndex].push(count);
+    imagearea[secColIndex][secRowIndex].push(style);
+    imagelist[secColIndex][secRowIndex].push(count);
     this.setState({imagelist:imagelist,imageCount:count+1,imagearea:imagearea});
     }
     /*image upload*/
@@ -158,8 +158,8 @@ export default class PCEditor extends React.Component{
     let count = this.state.videoCount;
     let videoarea = this.state.videoarea;
     let style = [0,10,0,0,"solid","#000"];/*rotation,opacity,borderWidth,borderRadius,borderStyle,borderColor*/
-    videoarea[secIndex].push(style);
-    videolist[secIndex].push(count);
+    videoarea[secColIndex][secRowIndex].push(style);
+    videolist[secColIndex][secRowIndex].push(count);
     this.setState({videolist:videolist,videoCount:count+1,videoarea:videoarea});
     }
   uploadVideo({ file, fileList }){
@@ -210,19 +210,19 @@ export default class PCEditor extends React.Component{
     switch(e.target.value)
     {
     case "left":
-      textarea[secIndex][textareaKey][0] = "left";
+      textarea[secColIndex][secRowIndex][textareaKey][0] = "left";
       this.setState({textarea:textarea});
       break;
     case "right":
-      textarea[secIndex][textareaKey][0] = "right";
+      textarea[secColIndex][secRowIndex][textareaKey][0] = "right";
       this.setState({textarea:textarea});
       break;
     case "center":
-      textarea[secIndex][textareaKey][0] = "center";
+      textarea[secColIndex][secRowIndex][textareaKey][0] = "center";
       this.setState({textarea:textarea});
       break;
     case "justify":
-      textarea[secIndex][textareaKey][0] = "justify";
+      textarea[secColIndex][secRowIndex][textareaKey][0] = "justify";
       this.setState({textarea:textarea});
       break;
     };
@@ -230,54 +230,54 @@ export default class PCEditor extends React.Component{
     /*文字大小*/
     fontSizeChange(e){
       let textarea=this.state.textarea,textareaKey = this.state.textareaKey;
-      if(textarea[secIndex][textareaKey]){
-      textarea[secIndex][textareaKey][1]=e;
+      if(textarea[secColIndex][secRowIndex][textareaKey]){
+      textarea[secColIndex][secRowIndex][textareaKey][1]=e;
       this.setState({textarea:textarea});}
 
     }
     /*行高*/
     lineheightChange(e){
       let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
-      textarea[secIndex][textareaKey][2]=e;
+      textarea[secColIndex][secRowIndex][textareaKey][2]=e;
       this.setState({textarea:textarea});
     }
     /*letterSpacing*/
     letterSpacingChange(e){
       let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
-      textarea[secIndex][textareaKey][3]=e;
+      textarea[secColIndex][secRowIndex][textareaKey][3]=e;
       this.setState({textarea:textarea});
     }
     /*旋转*/
     rotationChange(e){
       let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
-      textarea[secIndex][textareaKey][6]=e;
+      textarea[secColIndex][secRowIndex][textareaKey][6]=e;
       this.setState({textarea:textarea});
     }
     /*边框宽度*/
     borderWidthChange(e){
       let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
-      textarea[secIndex][textareaKey][7]=e;
+      textarea[secColIndex][secRowIndex][textareaKey][7]=e;
       this.setState({textarea:textarea});
     }
     /*边框角圆*/
     borderRadiusChange(e){
       let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
-      textarea[secIndex][textareaKey][8]=e;
+      textarea[secColIndex][secRowIndex][textareaKey][8]=e;
       this.setState({textarea:textarea});
     }
     textColorChange(color){
       let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
-      textarea[secIndex][textareaKey][4]=color.hex;
+      textarea[secColIndex][secRowIndex][textareaKey][4]=color.hex;
       this.setState({textarea:textarea});
     };
     backgroundColorChange(color){
       let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
-      textarea[secIndex][textareaKey][5]=color.hex;
+      textarea[secColIndex][secRowIndex][textareaKey][5]=color.hex;
       this.setState({textarea:textarea});
     };
     borderColorChange(color){
       let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
-      textarea[secIndex][textareaKey][10]=color.hex;
+      textarea[secColIndex][secRowIndex][textareaKey][10]=color.hex;
       this.setState({textarea:textarea});
     };
     /*图片样式*/
@@ -289,30 +289,30 @@ export default class PCEditor extends React.Component{
     /*旋转*/
     irotationChange(e){
       let imagearea = this.state.imagearea,imageareaKey = this.state.imageareaKey;
-      imagearea[secIndex][imageareaKey][0]=e;
+      imagearea[secColIndex][secRowIndex][imageareaKey][0]=e;
       this.setState({imagearea:imagearea});
     }
     /*透明度*/
     iopacityChange(e){
       let imagearea = this.state.imagearea,imageareaKey = this.state.imageareaKey;
-      imagearea[secIndex][imageareaKey][1]=e;
+      imagearea[secColIndex][secRowIndex][imageareaKey][1]=e;
       this.setState({imagearea:imagearea});
     }
     /*边框宽度*/
     iborderWidthChange(e){
       let imagearea = this.state.imagearea,imageareaKey = this.state.imageareaKey;
-      imagearea[secIndex][imageareaKey][2]=e;
+      imagearea[secColIndex][secRowIndex][imageareaKey][2]=e;
       this.setState({imagearea:imagearea});
     }
     /*边框角圆*/
     iborderRadiusChange(e){
       let imagearea = this.state.imagearea,imageareaKey = this.state.imageareaKey;
-      imagearea[secIndex][imageareaKey][3]=e;
+      imagearea[secColIndex][secRowIndex][imageareaKey][3]=e;
       this.setState({imagearea:imagearea});
     }
     iborderColorChange(color){
       let imagearea = this.state.imagearea,imageareaKey = this.state.imageareaKey;
-      imagearea[secIndex][imageareaKey][5]=color.hex;
+      imagearea[secColIndex][secRowIndex][imageareaKey][5]=color.hex;
       this.setState({imagearea:imagearea});
     };
     /*视频样式*/
@@ -324,19 +324,19 @@ export default class PCEditor extends React.Component{
     /*旋转*/
     vrotationChange(e){
       let videoarea = this.state.videoarea,videoareaKey = this.state.videoareaKey;
-      videoarea[secIndex][videoareaKey][0]=e;
+      videoarea[secColIndex][secRowIndex][videoareaKey][0]=e;
       this.setState({videoarea:videoarea});
     }
     /*透明度*/
     vopacityChange(e){
       let videoarea = this.state.videoarea,videoareaKey = this.state.videoareaKey;
-      videoarea[secIndex][videoareaKey][1]=e;
+      videoarea[secColIndex][secRowIndex][videoareaKey][1]=e;
       this.setState({videoarea:videoarea});
     }
     /*边框宽度*/
     vborderWidthChange(e){
       let videoarea = this.state.videoarea,videoareaKey = this.state.videoareaKey;
-      videoarea[secIndex][videoareaKey][2]=e;
+      videoarea[secColIndex][secRowIndex][videoareaKey][2]=e;
       this.setState({videoarea:videoarea});
     }
     /*边框角圆*/
@@ -347,7 +347,7 @@ export default class PCEditor extends React.Component{
     }
     vborderColorChange(color){
       let videoarea = this.state.videoarea,videoareaKey = this.state.videoareaKey;
-      videoarea[secIndex][videoareaKey][5]=color.hex;
+      videoarea[secColIndex][secRowIndex][videoareaKey][5]=color.hex;
       this.setState({videoarea:videoarea});
     };
     /*获得当前焦点所在文本框的key*/
@@ -361,20 +361,28 @@ export default class PCEditor extends React.Component{
     }
     /*新建幻灯片*/
     addRightSlides(){
-      let{seclist,secNum,currentSecindex,sectransform,secHead} = this.state;
-      seclist.push(secNum+1);
-      sectransform[sectransform.length-1]=[translate:'translate(-600px,0)'];
-      secHead[secHead.length-1][3]=1;
-      secHead.push([0,0,1,0]);
-      this.setState({seclist:seclist,secNum:secNum+1,sectransform:sectransform,secHead:secHead});
+      let{seclist,secNum,currentSecindex,sectransform,secHead,curSecRow,curSecCol,textlist,imagelist,videolist,textarea,imagearea,videoarea} = this.state;
+      sectransform[curSecCol][curSecRow][0]='translate(-2000px)';
+      sectransform[curSecCol][curSecRow][1]=0;
+      seclist[curSecCol+1]?seclist.splice([curSecCol+1][curSecCol],0,secNum+1):seclist.splice([curSecCol+1],0,[[secNum+1]]);
+      console.log(seclist);
+      sectransform.splice([curSecCol+1][curSecCol],0,['translate(0)','100%'])
+      textlist[curSecCol+1]?textarea.splice([curSecCol+1][curSecRow],0,[]):textlist.splice([curSecCol+1],0,[[]]);
+      imagelist[curSecCol+1]?textarea.splice([curSecCol+1][curSecRow],0,[]):imagelist.splice([curSecCol+1],0,[[]]);
+      videolist[curSecCol+1]?textarea.splice([curSecCol+1][curSecRow],0,[]):videolist.splice([curSecCol+1],0,[[]]);
+      textarea[curSecCol+1]?textarea.splice([curSecCol+1][curSecRow],0,[]):textarea.splice([curSecCol+1],0,[[]]);
+      imagearea[curSecCol+1]?imagearea.splice([curSecCol+1][curSecRow],0,[]):imagearea.splice([curSecCol+1],0,[[]]);
+      videoarea[curSecCol+1]?videoarea.splice([curSecCol+1][curSecRow],0,[]):videoarea.splice([curSecCol+1],0,[[]]);
+      this.setState({seclist:seclist,secNum:secNum+1,sectransform:sectransform,curSecCol:curSecCol+1,
+      textlist:textlist,imagelist:imagelist,videolist:videolist,textarea:textarea,imagearea:imagearea,videoarea:videoarea});
+      secColIndex = secColIndex + 1
     };
     addDownSlides(){
-      let{seclist,secNum,currentSecindex,sectransform,secHead} = this.state;
-      seclist.push(secNum+1);
-      sectransform[sectransform.length-1]=[translate:'translate(0,-500px)'];
-      secHead[secHead.length-1]=[0,0,0,1];
-      secHead.push([0,0,1,0]);
-      this.setState({seclist:seclist,secNum:secNum+1,sectransform:sectransform,secHead:secHead});
+      let{seclist,secNum,currentSecindex,sectransform,secHead,curSecCol,curSecRow,textlist,imagelist,videolist,textarea,imagearea,videoarea} = this.state;
+      sectransform[curSecCol][curSecRow][0]='translate(0,-500px)';
+      seclist.splice([curSecCol][curSecRow+1],0,secNum+1);
+      this.setState({seclist:seclist,secNum:secNum+1,sectransform:sectransform,curSecCol:curSecCol+1});
+      secRowIndex = secRowIndex + 1;
     };
 
 
@@ -383,26 +391,18 @@ render(){
   let textareaKey = this.state.textareaKey;
   let currentTextStyle = textarea[textareaKey];
   let textlist = this.state.textlist;
-  let showTextlist = textlist[secIndex] ?
-  textlist[secIndex].map((text,index)=>(
-    <PCEditorTextarea key={index} textkey={index}
-    getTextareaKey = {this.getTextareaKey.bind(this)}
-    textarea={textarea[secIndex][index]} count = {text}
-    showTextSider={this.showTextSider.bind(this)}/>
-   ))
-     :
-     '';
+
    let imagearea = this.state.imagearea;
    let imageareaKey = this.state.imageareaKey;
    let currentImageStyle = imagearea[imageareaKey];
    let imagelist = this.state.imagelist;
    let imageObjectList = this.state.imageObjectList;
    let videoObjectList = this.state.videoObjectList;
-   let showImagelist = imagelist[secIndex] ?
-   imagelist[secIndex].map((image,index)=>(
+   let showImagelist = imagelist[secColIndex][secRowIndex] ?
+   imagelist[secColIndex][secRowIndex].map((image,index)=>(
      <PCEditorImagearea key={index} imagekey={index}
      getImageareaKey = {this.getImageareaKey.bind(this)}
-     imagearea={imagearea[secIndex][index]} count = {image}
+     imagearea={imagearea[secColIndex][secRowIndex][index]} count = {image}
      imageObjectList={imageObjectList}
      showImageSider={this.showImageSider.bind(this)}/>
     ))
@@ -412,11 +412,11 @@ render(){
     let videoareaKey = this.state.videoareaKey;
     let currentVideoStyle = videoarea[videoareaKey];
     let videolist = this.state.videolist;
-    let showVideolist = videolist[secIndex] ?
-    videolist[secIndex].map((video,index)=>(
+    let showVideolist = videolist[secColIndex][secRowIndex] ?
+    videolist[secColIndex][secRowIndex].map((video,index)=>(
       <PCEditorVideoarea key={index} videokey={index}
       getVideoareaKey = {this.getVideoareaKey.bind(this)}
-      videoarea={videoarea[secIndex][index]} count = {video}
+      videoarea={videoarea[secColIndex][secRowIndex][index]} count = {video}
       videoObjectList={videoObjectList}
       showVideoSider={this.showVideoSider.bind(this)}/>
      ))
@@ -424,18 +424,34 @@ render(){
        '';
     let {sectransform,seclist,secHead,secpre} = this.state;
     let showSeclist = seclist ?
-    seclist.map(function (sec,index){
-      secIndex = index;
-      return(
-     <section key={index} class="secs" style={{transform:sectransform[index],transition: 'transform 2s',width:800,height:500,overflow:'hidden',backgroundColor:'#fff'}} headdown={secHead[index]}>
-       {showTextlist}
-       {showImagelist}
-       {showVideolist}
-     </section>
-   );
- })
-      :
-      '';
+      seclist.map(function (secCol,colindex){
+      secColIndex = colindex;
+        let showSecRow = seclist[rowindex] ?
+          seclist[colindex].map(function (secRow,rowindex){
+          secRowIndex = rowindex;
+          let showTextlist = textlist[colindex][rowindex] ?
+            textlist[colindex][rowindex].map((text,tindex)=>(
+              <PCEditorTextarea key={tindex} textkey={tindex}
+              getTextareaKey = {this.getTextareaKey.bind(this)}
+              textarea={textarea[colindex][rowindex][tindex]} count = {text}
+              showTextSider={this.showTextSider.bind(this)}/>
+             ))
+               :
+               '';
+        return(
+       <section key={colindex} class="secs" style={{transform:sectransform[rowindex][colindex][0],backgroundColor:'#fff',transition: 'all 2s linear',position:"relative",height:"100%",width:sectransform[rowindex][colindex][1]}}>
+         {showTextlist}
+         {showImagelist}
+         {showVideolist}
+       </section>
+     );
+   })
+     :
+     '';
+     return(showSecRow);
+   })
+  :
+  '';
     return (
         <div>
         <PCHeader/>
@@ -516,20 +532,20 @@ render(){
                 vborderRadiusChange={this.vborderRadiusChange.bind(this)}
                 vborderColorChange={this.vborderColorChange.bind(this)}/>
               </Sider>
-              <Content style={{position:'fixed',overflow:'auto', left:300,width:"74%",height:"90%",margin: '24px 16px', padding: 0, minHeight: 280 }}>
-                <article>
-                  <div id="slides" style={{margin:'auto'}}>
+              <Content style={{position:'fixed',overflow:'scroll', left:300,width:"74%",height:"90%",margin: '24px 16px',backgroundColor:"#ddd", padding: 0, minHeight: 280 }}>
+
+                  <div id="slides" style={{margin:'auto',backgroundColor:"#fff",top:"5%",width:"90%",height:"90%",overflow:"visible",position:"relative"}}>
                     {showSeclist}
                   </div>
-                  <aside class="control" style={{position:'fixed',left:'80%',top:'95%'}}>
+                  <aside class="control" style={{position:'absolute',right:0,bottom:0}}>
                     <Button class="navigator-up" htmlType="button"  ><Icon type="up" /></Button>
                     <Button class="navigator-down" htmlType="button" ><Icon type="down" /></Button>
                     <Button class="navigator-left" htmlType="button" ><Icon type="left" /></Button>
                     <Button class="navigator-right" htmlType="button" ><Icon type="right" /></Button>
                   </aside>
-                  <Button class="add-slides" htmlType="button" onClick={this.addRightSlides.bind(this)} style={{position:'fixed',height:'50px',width:'50px',padding:0,boxSizing:'border-box',border:'none',top:'50%',left:'95%',fontSize:50,textarea:'center',background:'none'}}><Icon type="plus-circle-o"/></Button>
-                  <Button class="add-slides" htmlType="button" onClick={this.addDownSlides.bind(this)} style={{position:'fixed',height:'50px',width:'50px',padding:0,boxSizing:'border-box',border:'none',top:'90%',left:'60%',fontSize:50,textarea:'center',background:'none'}}><Icon type="plus-circle-o" /></Button>
-                </article>
+                  <Button class="add-slides" htmlType="button" onClick={this.addRightSlides.bind(this)} style={{position:'absolute',height:'50px',width:'50px',padding:0,boxSizing:'border-box',border:'none',top:'50%',right:0,fontSize:50,textarea:'center',background:'none'}}><Icon type="plus-circle-o"/></Button>
+                  <Button class="add-slides" htmlType="button" onClick={this.addDownSlides.bind(this)} style={{position:'absolute',height:'50px',width:'50px',padding:0,boxSizing:'border-box',border:'none',bottom:0,left:'50%',fontSize:50,textarea:'center',background:'none'}}><Icon type="plus-circle-o" /></Button>
+
               </Content>
             </Layout>
             </div>

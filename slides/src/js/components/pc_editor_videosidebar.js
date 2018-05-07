@@ -23,6 +23,7 @@ export default class PCEditorVideosidebar extends React.Component{
   constructor(){
 		super();
 		this.state = {
+      fileList: [],
       rotationValue:0,
       opacityValue:10,
       borderWidthValue:1,
@@ -31,6 +32,9 @@ export default class PCEditorVideosidebar extends React.Component{
       displayColorPicker: false,
 		};
 	};
+
+ handleChange({ fileList }){this.setState({ fileList })};
+
  rotationChange(e){
    this.setState({
      rotationValue: e
@@ -81,6 +85,18 @@ render(){
             <Button type="Dash" onClick={this.props.showOriginSider}>
               <Icon type="left" />Backward
             </Button>
+          </div>
+          <div class="video-func" style={{textAlign:"center"}}>
+            <Upload
+              action=""
+              fileList={this.state.fileList}
+              accept='video'
+              onChange={this.handleChange.bind(this)}
+            >
+              <Button>
+                <Icon type="upload" /> Click to Upload
+              </Button>
+            </Upload>
           </div>
           <div class='video-func'>
             <p>Rotation</p>

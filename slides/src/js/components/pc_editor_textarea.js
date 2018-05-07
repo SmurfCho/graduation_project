@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Rnd from 'react-rnd';
+import Draggable from 'react-draggable';
+import Resizable from 're-resizable';
 
 
 export default class PCEditorTextarea extends React.Component {
@@ -24,21 +26,18 @@ export default class PCEditorTextarea extends React.Component {
     this.props.getTextareaKey(e);
   }
   textBlur(e){
-    this.setState({disableDragging:false,cursor:"move"});
+    this.setState({disableDragging:false,cursor:"text"});
   }
   render() {
     let textarea = this.props.textarea;
     let rndstyle = {
-      height:500,
-      width:500,
-      position:"fixed",
-      display: "block",
-      border: 'solid 1px #ddd',
-      background: '#f0f0f0',
-      borderRadius:textarea[8],
+      position:"absolute",
+      display: 'inline-block',
+      border: 'none',
+      background: 'none',
     };
     let textStyle={
-      cursor:this.state.cursor,
+      cursor:'text',
       margin:0,
       position:'relative',
       height:"100%",
@@ -66,24 +65,36 @@ export default class PCEditorTextarea extends React.Component {
        ''*/
 
     return (
+      <Draggable
+      axis="both"
+      handle=".handle"
+      defaultPosition={{x: 0, y: 0}}
+      position={null}
+      grid={[25, 25]}
+      onStart={this.handleStart}
+      onDrag={this.handleDrag}
+      onStop={this.handleStop}>
+      <div style={rndstyle}>
 
-        <Rnd
-        style={rndstyle} disableDragging={this.state.disableDragging}
-        size={{ width: this.state.width, height: this.state.height }}
-        onDragStop={(e, d) => { this.setState({ x: d.x, y: d.y }) }}
-        onResize={(e, direction, ref, delta, position) => {
-          this.setState({
-            width: ref.offsetWidth,
-            height: ref.offsetHeight,
-          });
-        }}
+        <Resizable
+          style={{
+          transform:"rotate("+textarea[6]+"deg)",
+          transformOrigin:"50%"}}
+          enable={{ top:false, right:true, bottom:true, left:false, topRight:false, bottomRight:true, bottomLeft:false, topLeft:false }}
+          defaultSize={{
+            width: 200,
+            height: 200,
+          }}
         >
-          <div contentEditable = "true"  autoFocus="autofocus" id = {this.props.count}
-          onBlur={this.textBlur.bind(this)} onDoubleClick={this.allFocus.bind(this)}
-          onClick={this.textFocus.bind(this)} style={textStyle} title="双击编辑文本">
+        <div className="handle" style={{position:"absolute",userSelect:"none",width:10,height:"100%",borderRadius:10,border:"none",display:"inline-block",top:0,left:-5,cursor:"move"}}></div>
 
-          </div>
-        </Rnd>
+
+        <div contentEditable = "true"  autoFocus="autofocus" id = {this.props.count}
+        onBlur={this.textBlur.bind(this)} onDoubleClick={this.allFocus.bind(this)}
+        onClick={this.textFocus.bind(this)} style={textStyle} title="双击编辑文本"></div>
+      </Resizable>
+      </div>
+    </Draggable>
     );
   }
 }
