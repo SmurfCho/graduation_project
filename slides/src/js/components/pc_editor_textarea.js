@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Rnd from 'react-rnd';
 import Draggable from 'react-draggable';
 import Resizable from 're-resizable';
 

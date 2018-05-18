@@ -270,6 +270,13 @@ export default class PCEditor extends React.Component{
       textarea[curSecCol][curSecRow][textareaKey][8]=e;
       this.setState({textarea:textarea});
     }
+    borderStyleChange(e){
+      let {curSecCol,curSecRow}=this.state;
+      let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
+      textarea[curSecCol][curSecRow][textareaKey][9]=e;
+      console.log(e);
+      this.setState({textarea:textarea});
+    }
     textColorChange(color){
       let {curSecCol,curSecRow}=this.state;
       let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
@@ -360,7 +367,7 @@ export default class PCEditor extends React.Component{
     vborderRadiusChange(e){
       let {curSecCol,curSecRow}=this.state;
       let videoarea = this.state.videoarea,videoareaKey = this.state.videoareaKey;
-      videoarea[videoareaKey][3]=e;
+      videoarea[curSecCol][curSecRow][videoareaKey][3]=e;
       this.setState({videoarea:videoarea});
     }
     vborderColorChange(color){
@@ -477,6 +484,7 @@ export default class PCEditor extends React.Component{
       localStorage.imagearea = this.state.imagearea;
       localStorage.videoarea = this.state.videoarea;
       localStorage.transform = this.state.transform;
+      console.log(localStorage);
     }
     /*从当前幻灯片开始演示*/
     fromCurSlide(){
@@ -558,7 +566,7 @@ render(){
                     <Button htmlType="button" id="tool-btn2" title="撤销">
                       <Icon class="tool-icon" type="rollback" />
                     </Button>
-                    <Button htmlType="button" id="tool-btn3" title="保存">
+                    <Button htmlType="button" id="tool-btn3" title="保存" onClick={this.storageSlides.bind(this)}>
                       <Icon class="tool-icon" type="save" />
                     </Button>
                     <Link target="_blank" to={`/player`}>
@@ -601,6 +609,7 @@ render(){
                   rotationChange={this.rotationChange.bind(this)}
                   borderWidthChange={this.borderWidthChange.bind(this)}
                   borderRadiusChange={this.borderRadiusChange.bind(this)}
+                  borderStyleChange={this.borderStyleChange.bind(this)}
                   textColorChange={this.textColorChange.bind(this)}
                   borderColorChange={this.borderColorChange.bind(this)}
                   backgroundColorChange={this.backgroundColorChange.bind(this)}

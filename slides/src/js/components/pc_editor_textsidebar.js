@@ -12,10 +12,12 @@ import {
   Popover,
   Radio,
   Input,
+  Select,
 } from 'antd';
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const { Footer,Content,Sider } = Layout;
+const Option = Select.Option;
 export default class PCEditorTextsidebar extends React.Component{
   constructor(){
 		super();
@@ -26,6 +28,7 @@ export default class PCEditorTextsidebar extends React.Component{
       rotationValue:0,
       borderWidthValue:1,
       borderRadiusValue:0,
+      borderStyleValue:"solid",
       textColorValue:"#000",
       backgroundColorValue:"#fff",
       borderColorValue:"#000",
@@ -83,6 +86,15 @@ borderWidthChange(e){
 handleborderWidthChange(e){
   this.props.borderWidthChange(e);
   this.borderWidthChange(e);
+}
+borderStyleChange(e){
+  this.setState({
+    borderStyleValue: e
+  });
+}
+handleborderStyleChange(e){
+  this.props.borderStyleChange(e);
+  this.borderStyleChange(e);
 }
 borderRadiusChange(e){
   this.setState({
@@ -247,6 +259,14 @@ render(){
                 />
               </Col>
             </Row>
+          </div>
+          <div class='text-func'>
+            <p>border style</p>
+            <Select defaultValue="solid" style={{ width: 120 }} onChange={this.handleborderStyleChange.bind(this)}>
+              <Option value="solid">solid</Option>
+              <Option value="dashed">dashed</Option>
+              <Option value="none">none</Option>
+            </Select>
           </div>
           <div class='text-func'>
             <p>border color</p>

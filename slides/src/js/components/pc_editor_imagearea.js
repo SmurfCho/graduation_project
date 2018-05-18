@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Rnd from 'react-rnd';
+import Draggable from 'react-draggable';
+import Resizable from 're-resizable';
 
 
 export default class PCEditorImagearea extends React.Component {
@@ -22,22 +23,21 @@ export default class PCEditorImagearea extends React.Component {
   render() {
     let imagearea = this.props.imagearea;
     let rndstyle = {
-      height:500,
-      width:500,
       position:"absolute",
       display: "block",
-      border: 'solid 1px #ddd',
-      background: '#f0f0f0',
+      border: 'none',
+      background: 'none',
       opacity:imagearea[1]*0.1,
       borderRadius:imagearea[3],
     };
     let imageStyle={
-      cursor:this.state.cursor,
+      cursor:"auto",
       margin:0,
       position:'relative',
       height:"100%",
       width:"100%",
       display:'block',
+      background: '#f0f0f0',
       borderWidth:imagearea[2],
       borderStyle:imagearea[4],
       borderRadius:imagearea[3],
@@ -46,24 +46,33 @@ export default class PCEditorImagearea extends React.Component {
     let imageObjectList = this.props.imageObjectList;
     let key = this.props.imagekey;/*当前图片索引*/
     return (
-      <div style={{position:"absolute",transform:"rotate("+imagearea[0]+"deg)",
-      transformOrigin:"50%",height:this.state.height,width:this.state.width}}
-      >
-        <Rnd
-        style={rndstyle} disableDragging={this.state.disableDragging}
-        size={{ width: this.state.width, height: this.state.height }}
-        onDragStop={(e, d) => { this.setState({ x: d.x, y: d.y }) }}
-        onResize={(e, direction, ref, delta, position) => {
-          this.setState({
-            width: ref.offsetWidth,
-            height: ref.offsetHeight,
-          });
-        }}
+      <Draggable
+      axis="both"
+      handle=".handle"
+      defaultPosition={{x: 0, y: 0}}
+      position={null}
+      grid={[25, 25]}
+      onStart={this.handleStart}
+      onDrag={this.handleDrag}
+      onStop={this.handleStop}>
+      <div style={rndstyle}>
+
+        <Resizable
+          style={{
+          transform:"rotate("+imagearea[0]+"deg)",
+          transformOrigin:"50%"}}
+          enable={{ top:false, right:true, bottom:true, left:false, topRight:false, bottomRight:true, bottomLeft:false, topLeft:false }}
+          defaultSize={{
+            width: 200,
+            height: 200,
+          }}
         >
-          <img  autoFocus="autofocus" src={[key]} id = {this.props.count} onClick={this.allFocus.bind(this)}
-          style={imageStyle} title="点击编辑图片"/>
-        </Rnd>
+        <div className="handle" style={{position:"absolute",userSelect:"none",width:10,height:"100%",borderRadius:10,border:"none",display:"inline-block",top:0,left:-5,cursor:"move"}}></div>
+        <img  autoFocus="autofocus" src="./src/images/timg.jpg" id = {this.props.count} onClick={this.allFocus.bind(this)}
+        style={imageStyle} title="点击编辑图片"/>
+      </Resizable>
       </div>
+    </Draggable>
     );
   }
 }
