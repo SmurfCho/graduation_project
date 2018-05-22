@@ -1,7 +1,7 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Draggable from 'react-draggable';
-import Resizable from 're-resizable';
+import React from "react";
+import ReactDOM from "react-dom";
+import Draggable from "react-draggable";
+import Resizable from "re-resizable";
 
 
 export default class PCEditorTextarea extends React.Component {
@@ -13,7 +13,7 @@ export default class PCEditorTextarea extends React.Component {
       x:10,
       y:10,
       disableDragging:false,
-      cursor:'move',
+      cursor:"move",
     };
   };
 
@@ -26,19 +26,27 @@ export default class PCEditorTextarea extends React.Component {
   }
   textBlur(e){
     this.setState({disableDragging:false,cursor:"text"});
+    this.props.getTextContent(e);
+  }
+  dragBlur(e){
+    this.props.getTextareaPosition(e);
+  }
+  resizeBlur(e){
+    this.props.getTextareaSize(e);
+    this.props.getTextareaPosition(e);
   }
   render() {
     let textarea = this.props.textarea;
     let rndstyle = {
       position:"absolute",
-      display: 'inline-block',
-      border: 'none',
-      background: 'none',
+      display: "inline-block",
+      border: "none",
+      background: "none",
     };
     let textStyle={
-      cursor:'text',
+      cursor:"text",
       margin:0,
-      position:'relative',
+      position:"relative",
       height:"100%",
       width:"100%",
       overflow:"hidden",
@@ -61,7 +69,7 @@ export default class PCEditorTextarea extends React.Component {
       />
      ))
        :
-       ''*/
+       ""*/
 
     return (
       <Draggable
@@ -73,6 +81,7 @@ export default class PCEditorTextarea extends React.Component {
       onStart={this.handleStart}
       onDrag={this.handleDrag}
       onStop={this.handleStop}>
+
       <div style={rndstyle}>
 
         <Resizable
@@ -84,11 +93,12 @@ export default class PCEditorTextarea extends React.Component {
             width: 200,
             height: 200,
           }}
+          onMouseUp={this.resizeBlur.bind(this)}
         >
-        <div className="handle" style={{position:"absolute",userSelect:"none",width:10,height:"100%",borderRadius:10,border:"none",display:"inline-block",top:0,left:-5,cursor:"move"}}></div>
+        <div className="handle" onMouseUp={this.dragBlur.bind(this)} style={{position:"absolute",userSelect:"none",width:10,height:"100%",borderRadius:10,border:"none",display:"inline-block",top:0,left:-5,cursor:"move"}}></div>
 
 
-        <div contentEditable = "true"  autoFocus="autofocus" id = {this.props.count}
+        <div contentEditable = {this.props.contentEditable}  autoFocus="autofocus" id = {this.props.count}
         onBlur={this.textBlur.bind(this)} onFocus={this.allFocus.bind(this)}
         onClick={this.textFocus.bind(this)} style={textStyle} title="双击编辑文本"></div>
       </Resizable>

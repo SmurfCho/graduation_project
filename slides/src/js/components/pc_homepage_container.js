@@ -1,6 +1,6 @@
-import React from 'react';
-import { Row,Col } from 'antd';
-import { Tabs,Carousel } from 'antd';
+import React from "react";
+import { Row,Col } from "antd";
+import { Tabs,Carousel } from "antd";
 const TabPane = Tabs.TabPane;
 
 export default class PCHomepageContainer extends React.Component{

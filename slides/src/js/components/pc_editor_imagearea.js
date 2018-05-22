@@ -1,7 +1,7 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Draggable from 'react-draggable';
-import Resizable from 're-resizable';
+import React from "react";
+import ReactDOM from "react-dom";
+import Draggable from "react-draggable";
+import Resizable from "re-resizable";
 
 
 export default class PCEditorImagearea extends React.Component {
@@ -13,31 +13,35 @@ export default class PCEditorImagearea extends React.Component {
       x:10,
       y:10,
       disableDragging:false,
-      cursor:'move',
+      cursor:"move",
     };
   };
   allFocus(e){
     this.props.showImageSider(e);
     this.props.getImageareaKey(e);
   }
+  resizeBlur(e){
+    this.props.getImageSize(e);
+    this.props.getImagePosition(e);
+  }
   render() {
     let imagearea = this.props.imagearea;
     let rndstyle = {
       position:"absolute",
       display: "block",
-      border: 'none',
-      background: 'none',
+      border: "none",
+      background: "none",
       opacity:imagearea[1]*0.1,
       borderRadius:imagearea[3],
     };
     let imageStyle={
       cursor:"auto",
       margin:0,
-      position:'relative',
+      position:"relative",
       height:"100%",
       width:"100%",
-      display:'block',
-      background: '#f0f0f0',
+      display:"block",
+      background: "#f0f0f0",
       borderWidth:imagearea[2],
       borderStyle:imagearea[4],
       borderRadius:imagearea[3],
@@ -66,6 +70,7 @@ export default class PCEditorImagearea extends React.Component {
             width: 200,
             height: 200,
           }}
+          onMouseUp={this.resizeBlur.bind(this)}
         >
         <div className="handle" style={{position:"absolute",userSelect:"none",width:10,height:"100%",borderRadius:10,border:"none",display:"inline-block",top:0,left:-5,cursor:"move"}}></div>
         <img  autoFocus="autofocus" src="./src/images/timg.jpg" id = {this.props.count} onClick={this.allFocus.bind(this)}

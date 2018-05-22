@@ -1,5 +1,5 @@
 <div style={{
-transform:"translate("+this.state.x+"px,"+this.state.y+"px) rotate("+textarea[6]+"deg)", position:'fixed',
+transform:"translate("+this.state.x+"px,"+this.state.y+"px) rotate("+textarea[6]+"deg)", position:"fixed",
 transformOrigin:"50%",height:this.state.height,width:this.state.width}}
 >
   <Rnd

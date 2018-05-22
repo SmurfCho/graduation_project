@@ -1,7 +1,7 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Draggable from 'react-draggable';
-import Resizable from 're-resizable';
+import React from "react";
+import ReactDOM from "react-dom";
+import Draggable from "react-draggable";
+import Resizable from "re-resizable";
 
 
 export default class PCEditorVideoarea extends React.Component {
@@ -13,31 +13,35 @@ export default class PCEditorVideoarea extends React.Component {
       x:10,
       y:10,
       disableDragging:false,
-      cursor:'move',
+      cursor:"move",
     };
   };
   allFocus(e){
     this.props.showVideoSider(e);
     this.props.getVideoareaKey(e);
   }
+  resizeBlur(e){
+    this.props.getVideoSize(e);
+    this.props.getVideoPosition(e);
+  }
   render() {
     let videoarea = this.props.videoarea;
     let rndstyle = {
       position:"absolute",
       display: "inline-block",
-      border: 'solid 1px #ddd',
-      background: 'none',
+      border: "solid 1px #ddd",
+      background: "none",
       border:"none",
       opacity:videoarea[1]*0.1,
       borderRadius:videoarea[3],
     };
     let videoStyle={
-      cursor:'auto',
+      cursor:"auto",
       margin:0,
-      position:'relative',
+      position:"relative",
       height:"100%",
       width:"100%",
-      display:'block',
+      display:"block",
       background:"#eee",
       borderWidth:videoarea[2],
       borderStyle:videoarea[4],
@@ -68,6 +72,7 @@ export default class PCEditorVideoarea extends React.Component {
             width: 200,
             height: 200,
           }}
+          onMouseUp={this.resizeBlur.bind(this)}
         >
           <div className="handle" style={{position:"absolute",userSelect:"none",width:10,height:"100%",borderRadius:10,border:"none",display:"inline-block",top:0,left:-5,cursor:"move"}}></div>
           <video id = {this.props.count} controls="controls" onClick={this.allFocus.bind(this)}

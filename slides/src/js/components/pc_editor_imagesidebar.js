@@ -1,5 +1,5 @@
-import React from 'react';
-import SketchPicker from 'react-color';
+import React from "react";
+import SketchPicker from "react-color";
 require(`../../css/pc_editor_imagesidebar.css`);
 import {
   Row,
@@ -12,7 +12,7 @@ import {
   Popover,
   Radio,
   Input,
-} from 'antd';
+} from "antd";
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const { Footer,Content,Sider } = Layout;
@@ -84,13 +84,13 @@ render(){
     );
     return (
         <div>
-          <div class='back' style={{textAlign:"center"}}>
+          <div class="back" style={{textAlign:"center"}}>
           <Button type="Dash" onClick={this.props.showOriginSider}>
             <Icon type="left" />Backward
           </Button>
           </div>
 
-          <div class='image-func'>
+          <div class="image-func">
             <p>Rotation</p>
             <Row>
               <Col span={12}>
@@ -100,14 +100,14 @@ render(){
                 <InputNumber
                   min={0}
                   max={360}
-                  style={{ marginLeft: 16,width:45,display:'inline-block' }}
+                  style={{ marginLeft: 16,width:45,display:"inline-block" }}
                   value={this.state.rotationValue}
                   onChange={this.handlerotationChange.bind(this)}
                 />
               </Col>
             </Row>
           </div>
-          <div class='image-func'>
+          <div class="image-func">
             <p>Opacity</p>
             <Row>
               <Col span={12}>
@@ -117,14 +117,14 @@ render(){
                 <InputNumber
                   min={0}
                   max={10}
-                  style={{ marginLeft: 16,width:45,display:'inline-block' }}
+                  style={{ marginLeft: 16,width:45,display:"inline-block" }}
                   value={this.state.opacityValue}
                   onChange={this.handleopacityChange.bind(this)}
                 />
               </Col>
             </Row>
           </div>
-          <div class='image-func'>
+          <div class="image-func">
             <p>border width</p>
             <Row>
               <Col span={12}>
@@ -134,14 +134,14 @@ render(){
                 <InputNumber
                   min={1}
                   max={100}
-                  style={{ marginLeft: 16,width:45,display:'inline-block' }}
+                  style={{ marginLeft: 16,width:45,display:"inline-block" }}
                   value={this.state.borderWidthValue}
                   onChange={this.handleborderWidthChange.bind(this)}
                 />
               </Col>
             </Row>
           </div>
-          <div class='image-func'>
+          <div class="image-func">
             <p>border radius</p>
             <Row>
               <Col span={12}>
@@ -151,23 +151,23 @@ render(){
                 <InputNumber
                   min={1}
                   max={100}
-                  style={{ marginLeft: 16,width:45,display:'inline-block' }}
+                  style={{ marginLeft: 16,width:45,display:"inline-block" }}
                   value={this.state.borderRadiusValue}
                   onChange={this.handleborderRadiusChange.bind(this)}
                 />
               </Col>
             </Row>
           </div>
-          <div class='image-func'>
+          <div class="image-func">
             <p>border color</p>
             <Popover placement="right"  content={<SketchPicker color={this.state.borderColorValue}  onChangeComplete={this.handleBorderColorChange.bind(this)} type="sketch"/>} trigger="click">
               <Button>Pick Color</Button>
             </Popover>
           </div>
-          <div class='image-func'>
+          <div class="image-func">
             <p>Animation</p>
           </div>
-          <div class='image-func'>
+          <div class="image-func">
             <p>Depth</p>
           </div>
         </div>

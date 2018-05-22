@@ -1,5 +1,5 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
+import React from "react";
+import {Link} from "react-router-dom";
 import {
   Row,
   Col,
@@ -7,29 +7,30 @@ import {
   Icon,
   Layout,
   Upload,
-} from 'antd';
+  Modal,
+} from "antd";
 require(`../../css/pc_editor.css`);
 const { Footer,Content,Sider } = Layout;
-import PCHeader from './pc_header';
-import PCFooter from './pc_footer';
-import PCEditorTextsidebar from './pc_editor_textsidebar';
-import PCEditorImagesidebar from './pc_editor_imagesidebar';
-import PCEditorVideosidebar from './pc_editor_videosidebar';
-import PCEditorTextarea from './pc_editor_textarea';
-import PCEditorImagearea from './pc_editor_imagearea';
-import PCEditorVideoarea from './pc_editor_videoarea';
-import PCPlayer from './pc_player';
+import PCHeader from "./pc_header";
+import PCFooter from "./pc_footer";
+import PCEditorTextsidebar from "./pc_editor_textsidebar";
+import PCEditorImagesidebar from "./pc_editor_imagesidebar";
+import PCEditorVideosidebar from "./pc_editor_videosidebar";
+import PCEditorTextarea from "./pc_editor_textarea";
+import PCEditorImagearea from "./pc_editor_imagearea";
+import PCEditorVideoarea from "./pc_editor_videoarea";
+import PCPlayer from "./pc_player";
 export default class PCEditor extends React.Component{
   constructor(){
 		super();
 		this.state = {
-      originSider: 'visible',/*选择添加类型菜单条*/
+      originSider: "visible",/*选择添加类型菜单条*/
       originSiderop:1,
-      textSider: 'hidden',/*文本编辑工具条*/
+      textSider: "hidden",/*文本编辑工具条*/
       textSiderop:0,
-      imagesSider: 'hidden',/*图片编辑工具条*/
+      imagesSider: "hidden",/*图片编辑工具条*/
       imagesSiderop:0,
-      videoSider: 'hidden',/*视频编辑工具条*/
+      videoSider: "hidden",/*视频编辑工具条*/
       videoSiderop:0,
       count:0,/*文本框数*/
       textlist:[[[]]],/*文本框队列,保存文字内容*/
@@ -46,65 +47,77 @@ export default class PCEditor extends React.Component{
       videoarea:[[[]]],//视频样式队列
       imageObjectList: [],//图片list
       videoObjectList:[],
-      seclist:[['y']],//幻灯片队列
+      seclist:[["y"]],//幻灯片队列
       secNum:0,
       curSecRow:0,
       curSecCol:0,
-      sectransform:[[['translate(0,0)','100%','100%','block']],],
-		};
+      sectransform:[[["translate(0,0)","block"]]],
+      viewerDispaly: "none",
+      contentEditable:"true",
+      secId:0,
+      slideslist:[],
+      slidesIndex:0,
+      curslidesName:"",
+    };
 	};
 
-
+  componentDidMount(){
+    let userid = localStorage.userid;
+    let slideslistStr = localStorage.getItem(userid);
+    let slideslist = slideslistStr?JSON.parse(slideslistStr):[];
+    console.log("slideslist",slideslist);
+    this.setState({slideslist:slideslist,userid:userid,slidesIndex:this.props.match.params.curslidesIndex});
+  }
 
   /*展示工具条o*/
   showOriginSider(e){
     e.stopPropagation();
     e.preventDefault();
     this.setState({
-      originSider:'visible',
+      originSider:"visible",
       originSiderop:1,
-      textSider: 'hidden',/*文本编辑工具条*/
+      textSider: "hidden",/*文本编辑工具条*/
       textSiderop:0,
-      imagesSider: 'hidden',/*图片编辑工具条*/
+      imagesSider: "hidden",/*图片编辑工具条*/
       imagesSiderop:0,
-      videoSider: 'hidden',/*视频编辑工具条*/
+      videoSider: "hidden",/*视频编辑工具条*/
       videoSiderop:0,
     });
   }
 
   showTextSider(e){
     this.setState({
-      textSider:'visible',
+      textSider:"visible",
       textSiderop:1,
-      originSider: 'hidden',
+      originSider: "hidden",
       originSiderop:0,
-      imagesSider: 'hidden',
+      imagesSider: "hidden",
       imagesSiderop:0,
-      videoSider: 'hidden',
+      videoSider: "hidden",
       videoSiderop:0,
     });
   }
   showImageSider(e){
     this.setState({
-      imagesSider:'visible',
+      imagesSider:"visible",
       imagesSiderop:1,
-      originSider: 'hidden',
+      originSider: "hidden",
       originSiderop:0,
-      textSider: 'hidden',
+      textSider: "hidden",
       textSiderop:0,
-      videoSider: 'hidden',
+      videoSider: "hidden",
       videoSiderop:0,
     });
   }
   showVideoSider(e){
     this.setState({
-      videoSider:'visible',
+      videoSider:"visible",
       videoSiderop:1,
-      originSider: 'hidden',
+      originSider: "hidden",
       originSiderop:0,
-      textSider: 'hidden',
+      textSider: "hidden",
       textSiderop:0,
-      imagesSider: 'hidden',
+      imagesSider: "hidden",
       imagesSiderop:0,
     });
   }
@@ -114,7 +127,7 @@ export default class PCEditor extends React.Component{
   /*新建文本框o*/
   addTextarea(e){
      let {textlist,count,textarea,curSecCol,curSecRow} = this.state;
-     let style = ["left",16,1,2,"#000","#fff",0,1,0,"solid","#000",4];
+     let style = ["left",16,1,2,"#000","#fff",0,1,0,"solid","#000",4,0,200,200];
      textarea[curSecCol][curSecRow].push(style);
      textlist[curSecCol][curSecRow].push(count);
      this.setState({textlist:textlist,count:count+1,textarea:textarea});
@@ -131,7 +144,7 @@ export default class PCEditor extends React.Component{
     let imagelist = this.state.imagelist;
     let count = this.state.imageCount;
     let imagearea = this.state.imagearea;
-    let style = [0,10,0,0,"solid","#000"];/*rotation,opacity,borderWidth,borderRadius,borderStyle,borderColor*/
+    let style = [0,10,0,0,"solid","#000",0,200,200];/*rotation,opacity,borderWidth,borderRadius,borderStyle,borderColor*/
     imagearea[curSecCol][curSecRow].push(style);
     imagelist[curSecCol][curSecRow].push(count);
     this.setState({imagelist:imagelist,imageCount:count+1,imagearea:imagearea});
@@ -143,7 +156,7 @@ export default class PCEditor extends React.Component{
       imageObjectList.push(url);*/
       console.log(file,fileList);/*
       this.setState(imageObjectList:imageObjectList);
-      if (file.status !== 'uploading') {
+      if (file.status !== "uploading") {
     }*/
   }
 
@@ -157,7 +170,7 @@ export default class PCEditor extends React.Component{
     let videolist = this.state.videolist;
     let count = this.state.videoCount;
     let videoarea = this.state.videoarea;
-    let style = [0,10,0,0,"solid","#000"];/*rotation,opacity,borderWidth,borderRadius,borderStyle,borderColor*/
+    let style = [0,10,0,0,"solid","#000",0,200,200];/*rotation,opacity,borderWidth,borderRadius,borderStyle,borderColor*/
     videoarea[curSecCol][curSecRow].push(style);
     videolist[curSecCol][curSecRow].push(count);
     this.setState({videolist:videolist,videoCount:count+1,videoarea:videoarea});
@@ -200,7 +213,7 @@ export default class PCEditor extends React.Component{
     textareaKey != key ?
     this.setState({textareaKey:key})
     :
-    '';
+    "";
   }
   /*编辑文本alighment0*/
   getTextAlignKey(e){
@@ -226,6 +239,9 @@ export default class PCEditor extends React.Component{
       break;
     };
   };
+    textOnChange(e){
+      let {curSecCol,curSecRow,textlist} = this.state
+    }
     /*文字大小*/
     fontSizeChange(e){
       let {curSecCol,curSecRow}=this.state;
@@ -383,15 +399,13 @@ export default class PCEditor extends React.Component{
       textareaKey != key ?
       this.setState({textareaKey:key})
       :
-      '';
+      "";
     }
     /*新建幻灯片*/
     addRightSlides(){
       let{seclist,secNum,currentSecindex,sectransform,secHead,curSecRow,curSecCol,textlist,imagelist,videolist,textarea,imagearea,videoarea} = this.state;
       let row = curSecRow;
-      sectransform[curSecCol][curSecRow][0]='translate(-2000px,0)';/*使当前幻灯片向左滑动*/
-      /*sectransform[curSecCol][curSecRow][3]='none';*/
-      /*sectransform[curSecCol][curSecRow][1]=0;*//*使当前幻灯片宽度为0*/
+      sectransform[curSecCol][curSecRow][0]="translate(-2000px,0)";/*使当前幻灯片向左滑动*/
       if(!seclist[curSecCol+1]){
         seclist.splice([curSecCol+1],0,[]);
         sectransform.splice([curSecCol+1],0,[]);
@@ -402,32 +416,31 @@ export default class PCEditor extends React.Component{
         imagearea.splice([curSecCol+1],0,[]);
         videoarea.splice([curSecCol+1],0,[]);
       }
-      seclist[curSecCol+1].splice([curSecRow],0,'y');
-      sectransform[curSecCol+1].splice([curSecRow],0,['translate(0,0)','100%','100%','block']);
+      seclist[curSecCol+1].splice([curSecRow],0,"y");
+      sectransform[curSecCol+1].splice([curSecRow],0,["translate(0,0)","100%","100%","block"]);
       textlist[curSecCol+1].splice([curSecRow],0,[]);
       imagelist[curSecCol+1].splice([curSecRow],0,[]);
       videolist[curSecCol+1].splice([curSecRow],0,[]);
       textarea[curSecCol+1].splice([curSecRow],0,[]);
       imagearea[curSecCol+1].splice([curSecRow],0,[]);
       videoarea[curSecCol+1].splice([curSecRow],0,[]);
-      console.log('seclist:',seclist,'curSecRow',curSecRow,'curSecCol',curSecCol,'textlist',textlist);
+      console.log("seclist:",seclist,"curSecRow",curSecRow,"curSecCol",curSecCol,"textlist",textlist);
       this.setState({seclist:seclist,secNum:secNum+1,sectransform:sectransform,curSecCol:curSecCol+1,curSecRow:0,
       textlist:textlist,imagelist:imagelist,videolist:videolist,textarea:textarea,imagearea:imagearea,videoarea:videoarea});
     };
     addDownSlides(){
       let{seclist,secNum,currentSecindex,sectransform,secHead,curSecCol,curSecRow,textlist,imagelist,videolist,textarea,imagearea,videoarea} = this.state;
-      sectransform[curSecCol][curSecRow][0]='translate(0,-1000px)';/*使当前幻灯片向上滑动*/
-      sectransform[curSecCol][curSecRow][3]='none';
+      sectransform[curSecCol][curSecRow][0]="translate(0,-1000px)";/*使当前幻灯片向上滑动*/
       /*sectransform[curSecCol][curSecRow][2]=0;*//*使当前幻灯片高度为0*/
-      seclist[curSecCol].splice([curSecRow+1],0,'y');
-      sectransform[curSecCol].splice([curSecRow+1],0,['translate(0,0)','100%','100%','block']);
+      seclist[curSecCol].splice([curSecRow+1],0,"y");
+      sectransform[curSecCol].splice([curSecRow+1],0,["translate(0,0)","100%","100%","block"]);
       textlist[curSecCol].splice([curSecRow+1],0,[]);
       imagelist[curSecCol].splice([curSecRow+1],0,[]);
       videolist[curSecCol].splice([curSecRow+1],0,[]);
       textarea[curSecCol].splice([curSecRow+1],0,[]);
       imagearea[curSecCol].splice([curSecRow+1],0,[]);
       videoarea[curSecCol].splice([curSecRow+1],0,[]);
-      console.log('seclist:',seclist,'curSecRow',curSecRow,'curSecCol',curSecCol,'textlist',textlist);
+      console.log("seclist:",seclist,"curSecRow",curSecRow,"curSecCol",curSecCol,"textlist",textlist);
       this.setState({seclist:seclist,secNum:secNum+1,sectransform:sectransform,curSecRow:curSecRow+1,
       textlist:textlist,imagelist:imagelist,videolist:videolist,textarea:textarea,imagearea:imagearea,videoarea:videoarea});
 
@@ -437,58 +450,238 @@ export default class PCEditor extends React.Component{
       switch(e.target.id)
       {
       case "navigator-up":
-        if(seclist[curSecCol][curSecRow+1]=='y'){
-          sectransform[curSecCol][curSecRow][0]='translate(0,-1000px)';
-          sectransform[curSecCol][curSecRow+1][0]='translate(0,0)';
+        if(seclist[curSecCol][curSecRow+1]=="y"){
+          sectransform[curSecCol][curSecRow][0]="translate(0,-1000px)";
+          sectransform[curSecCol][curSecRow+1][0]="translate(0,0)";
           this.setState({sectransform:sectransform,curSecRow:curSecRow+1});
         }else{
-          alert("已经是最后一行了！")
+          let col = curSecCol+1,row = curSecRow+1;
+          alert("已经是最后一行了！目前在"+col+"列"+row+"行")
         }
         break;
       case "navigator-down":
-        if(seclist[curSecCol][curSecRow-1]=='y'){
-        sectransform[curSecCol][curSecRow-1][0]='translate(0,0)';
-        sectransform[curSecCol][curSecRow][0]='translate(0,1000px)';
+        if(seclist[curSecCol][curSecRow-1]=="y"){
+        sectransform[curSecCol][curSecRow-1][0]="translate(0,0)";
+        sectransform[curSecCol][curSecRow][0]="translate(0,1000px)";
         this.setState({sectransform:sectransform,curSecRow:curSecRow-1});
         }else{
-          alert("已经是第一行了！")
+          let col = curSecCol+1,row = curSecRow+1;
+          alert("已经是第一行了！目前在"+col+"列"+row+"行")
         }
         break;
       case "navigator-left":
-        if(seclist[curSecCol+1] && seclist[curSecCol+1][curSecRow]=='y'){
-        sectransform[curSecCol][curSecRow]=['translate(-2000px,0)',0,'100%'];
-        sectransform[curSecCol+1][curSecRow]=['translate(0,0)','100%','100%'];
+        if(seclist[curSecCol+1] && seclist[curSecCol+1][curSecRow]=="y"){
+        sectransform[curSecCol][curSecRow]=["translate(-2000px,0)",0,"100%"];
+        sectransform[curSecCol+1][curSecRow]=["translate(0,0)","100%","100%"];
         this.setState({sectransform:sectransform,curSecCol:curSecCol+1});
       }else{
-        alert("已经是最后一列了！")
+        let col = curSecCol+1,row = curSecRow+1;
+        alert("已经是最后一列了！目前在"+col+"列"+row+"行")
       }
         break;
       case "navigator-right":
-        if(seclist[curSecCol-1] && seclist[curSecCol-1][curSecRow]=='y'){
-        sectransform[curSecCol][curSecRow]=['translate(2000px,0)',0,'100%'];
-        sectransform[curSecCol-1][curSecRow]=['translate(0,0)','100%','100%'];
+        if(seclist[curSecCol-1] && seclist[curSecCol-1][curSecRow]=="y"){
+        sectransform[curSecCol][curSecRow]=["translate(2000px,0)",0,"100%"];
+        sectransform[curSecCol-1][curSecRow]=["translate(0,0)","100%","100%"];
         this.setState({sectransform:sectransform,curSecCol:curSecCol-1});
       }else{
-        alert("已经是第一列了！")
+        let col = curSecCol+1,row = curSecRow+1;
+        alert("已经是第一列了！目前在"+col+"列"+row+"行")
       }
         break;
       }
     }
-    /*储存*/
+    /*储存到本地*/
     storageSlides(){
-      localStorage.textlist = this.state.seclist;
-      localStorage.textlist = this.state.textlist;
-      localStorage.imagelist = this.state.imagelist;
-      localStorage.videolist = this.state.videolist;
-      localStorage.textarea = this.state.textarea;
-      localStorage.imagearea = this.state.imagearea;
-      localStorage.videoarea = this.state.videoarea;
-      localStorage.transform = this.state.transform;
-      console.log(localStorage);
+      let {secId,slideslist,slidesIndex,sectransform,seclist,curSecRow,curSecCol} = this.state;
+      let userid = localStorage.userid;
+      if(curSecCol != 0 && curSecRow != 0 && seclist[curSecCol][curSecRow-1]=="y"){
+        sectransform[curSecCol][curSecRow]=["translate(0,-1000px)","100%",0];
+        sectransform[0][0]=["translate(0,0)","100%","100%"];
+      }else if(curSecCol != 0 && curSecRow != 0 && seclist[curSecCol-1][curSecRow]=="y"){
+        sectransform[curSecCol][curSecRow]=["translate(-2000px,0)",0,"100%"];
+        sectransform[0][0]=["translate(0,0)","100%","100%"];
+      }
+      if(slideslist.length >   slidesIndex){
+        let slidesJSON = {
+          "seclist":this.state.seclist,
+          "textlist":this.state.textlist,
+          "imagelist":this.state.imagelist,
+          "videolist":this.state.videolist,
+          "textarea":this.state.textarea,
+          "imagearea":this.state.imagearea,
+          "videoarea":this.state.videoarea,
+          "transform":this.state.transform,
+          "sectransform":sectransform,
+          "slidesName":this.state.curslidesName
+        };
+        slideslist[slidesIndex]=slidesJSON;
+      }else if(slideslist.length==slidesIndex){
+        let slidesName=prompt("请输入幻灯片的名字","Slides_01");
+        let slidesJSON = {
+          "seclist":this.state.seclist,
+          "textlist":this.state.textlist,
+          "imagelist":this.state.imagelist,
+          "videolist":this.state.videolist,
+          "textarea":this.state.textarea,
+          "imagearea":this.state.imagearea,
+          "videoarea":this.state.videoarea,
+          "transform":this.state.transform,
+          "sectransform":sectransform,
+          "slidesName":slidesName
+        };
+        slideslist.push(slidesJSON);
+        this.setState({slidesName:slidesName});
+      };
+      console.log("slideslist",slideslist);
+      let slideslistStr = JSON.stringify(slideslist);
+      localStorage.setItem(userid,slideslistStr);
+      this.setState({slideslist:slideslist});
+      /*以下是用于测试的内容*/
+      let localInfo = localStorage.getItem(userid);
+      let jsonlocalInfo = JSON.parse(localInfo);
+      console.log("jsonlocalInfo",jsonlocalInfo);
     }
-    /*从当前幻灯片开始演示*/
-    fromCurSlide(){
+    showviwer(){
+      this.setState({viewerDispaly:"block",contentEditable:"false"});
+    }
+    closeviwer(){
+      this.setState({viewerDispaly:"none",contentEditable:"true"});
+    }
+    getTextContent(e){
+        let {curSecCol,curSecRow,textlist,textareaKey}=this.state;
+        textlist[curSecCol][curSecRow][textareaKey] = e.target.textContent;
+        this.setState({textlist:textlist});
+        console.log("textlist:",textlist);
+    }
+    getTextareaPosition(e){
+      let {curSecCol,curSecRow,textarea,textareaKey}=this.state;
+      textarea[curSecCol][curSecRow][textareaKey][12] = e.target.parentNode.parentNode.style.transform;
+      this.setState({textarea:textarea});
+    }
+    getTextareaSize(e){
+      let {curSecCol,curSecRow,textarea,textareaKey}=this.state;
+      textarea[curSecCol][curSecRow][textareaKey][13] = e.target.offsetHeight;
+      textarea[curSecCol][curSecRow][textareaKey][14] = e.target.offsetWidth;
+      this.setState({textarea:textarea});
+    }
+    getImageContent(e){
+        let {curSecCol,curSecRow,imagelist,imageareaKey}=this.state;
+        imagelist[curSecCol][curSecRow][imageareaKey] = e.target.src;
+        this.setState({imagelist:imagelist});
+        console.log("imagelist:",imagelist);
+    }
+    getImagePosition(e){
+      let {curSecCol,curSecRow,imagearea,imageareaKey}=this.state;
+      imagearea[curSecCol][curSecRow][imageareaKey][6] = e.target.parentNode.parentNode.style.transform;
+      this.setState({imagearea:imagearea});
+    }
+    getImageSize(e){
+      let {curSecCol,curSecRow,imagearea,imageareaKey}=this.state;
+      imagearea[curSecCol][curSecRow][imageareaKey][7] = e.target.offsetHeight;
+      imagearea[curSecCol][curSecRow][imageareaKey][8] = e.target.offsetWidth;
+      this.setState({imagearea:imagearea});
+    }
+    getVideoContent(e){
+        let {curSecCol,curSecRow,videolist,videoareaKey}=this.state;
+        videolist[curSecCol][curSecRow][videoareaKey] = e.target.src;
+        this.setState({videolist:videolist});
+        console.log("videolist:",videolist);
+    }
+    getVideoPosition(e){
+      let {curSecCol,curSecRow,videoarea,videoareaKey}=this.state;
+      videoarea[curSecCol][curSecRow][videoareaKey][6] = e.target.parentNode.parentNode.style.transform;
+      this.setState({videoarea:videoarea});
+    }
+    getVideoSize(e){
+      let {curSecCol,curSecRow,videoarea,videoareaKey}=this.state;
+      videoarea[curSecCol][curSecRow][videoareaKey][7] = e.target.offsetHeight;
+      videoarea[curSecCol][curSecRow][videoareaKey][8] = e.target.offsetWidth;
+      this.setState({videoarea:videoarea});
+    }
+    deleteText(e){
+      let{textarea,textareaKey,textlist,curSecRow,curSecCol} = this.state;
+      textlist[curSecCol][curSecRow].splice([textareaKey],1);
+      textarea[curSecCol][curSecRow].splice([textareaKey],1);
+      console.log("textlist",textlist);
+      this.setState({textlist:textlist,textarea:textarea});
+    }
+    deleteSlides(e){
+      let{seclist,secNum,currentSecindex,sectransform,secHead,curSecCol,curSecRow,textlist,imagelist,videolist,textarea,imagearea,videoarea} = this.state;
 
+      if(seclist.length==0 && [curSecCol-1]<0 && [curSecRow-1]<0){/*当前只有一张幻灯片，删除后则为空白*/
+        seclist[curSecCol].splice([curSecRow],1,"y");
+        sectransform[curSecCol].splice([curSecRow],["translate(0,0)","100%","100%","block"]);
+        textlist[curSecCol].splice([curSecRow],1,[]);
+        imagelist[curSecCol].splice([curSecRow],1,[]);
+        videolist[curSecCol].splice([curSecRow],1,[]);
+        textarea[curSecCol].splice([curSecRow],1,[]);
+        imagearea[curSecCol].splice([curSecRow],1,[]);
+        videoarea[curSecCol].splice([curSecRow],1,[]);
+      }else if(seclist[curSecCol].length<=1){/*当前列只有一张幻灯片，删除当前幻灯片即删除当前列*/
+        seclist.splice([curSecCol],1);
+        sectransform.splice([curSecCol],1);
+        textlist.splice([curSecCol],1);
+        imagelist.splice([curSecCol],1);
+        videolist.splice([curSecCol],1);
+        textarea.splice([curSecCol],1);
+        imagearea.splice([curSecCol],1);
+        videoarea.splice([curSecCol],1);
+      }else{
+        seclist[curSecCol].splice([curSecRow],1);
+        sectransform[curSecCol].splice([curSecRow],1);
+        textlist[curSecCol].splice([curSecRow],1);
+        imagelist[curSecCol].splice([curSecRow],1);
+        videolist[curSecCol].splice([curSecRow],1);
+        textarea[curSecCol].splice([curSecRow],1);
+        imagearea[curSecCol].splice([curSecRow],1);
+        videoarea[curSecCol].splice([curSecRow],1);
+      }
+      if(seclist[curSecCol][curSecRow+1] == "y"){
+        sectransform[curSecCol][curSecRow+1][0]="translate(0,0)";
+        curSecRow=curSecRow=1;
+      }else if(seclist[curSecCol][curSecRow-1] == "y"){
+        sectransform[curSecCol][curSecRow-1][0]="translate(0,0)";
+        curSecRow=curSecRow-1;
+      }else if(seclist[curSecCol+1][curSecRow] == "y"){/*列数大于1,且总列数大于当前页码，则向后一列移动*/
+        sectransform[curSecCol+1][curSecRow][0]="translate(0,0)";
+        curSecCol=curSecCol+1;
+      }else if(seclist[curSecCol-1][curSecRow] == "y"){
+        sectransform[curSecCol-1][curSecRow][0]="translate(0,0)";
+        curSecCol=curSecCol-1;
+      }
+      console.log("seclist:",seclist,"curSecRow",curSecRow,"curSecCol",curSecCol,"textlist",textlist);
+      this.setState({seclist:seclist,secNum:secNum+1,sectransform:sectransform,curSecRow:curSecRow,curSecCol:curSecCol,
+      textlist:textlist,imagelist:imagelist,videolist:videolist,textarea:textarea,imagearea:imagearea,videoarea:videoarea});
+    }
+    clearslides(){
+      let {slidesIndex} = this.state;
+      this.setState({count:0,textlist:[[[]]],imageCount:0,imagelist:[[[]]],videoCount:0,videolist:[[[]]],textareaKey:0,
+      textarea:[[[]]],imageareaKey:0,imagearea:[[[]]],videoareaKey:0,videoarea:[[[]]],imageObjectList:[],
+      videoObjectList:[],seclist:[["y"]],secNum:0,curSecRow:0,curSecCol:0,
+      sectransform:[[["translate(0,0)","100%","100%","block"]],],slidesIndex:slidesIndex+1});
+    }
+    deleteAllSlides(){
+      let {slideslist,slidesIndex} = this.state;
+      let del=confirm("确定要删除该幻灯片吗？");
+      if(del == true){
+        this.clearslides();
+        slideslist[slidesIndex]?slideslist.splice(slidesIndex,1):"";
+        this.setState({slideslist:slideslist});
+      }
+    };
+    newSlides(){
+      let {slideslist,slidesIndex} = this.state;
+      let storage = confirm("是否需要保存当前幻灯片？");
+      if(storage == false){
+        this.clearslides();
+        slideslist[slidesIndex]?slideslist.splice(slidesIndex,1):"";
+        this.setState({slideslist:slideslist});
+      }else if(storage == true){
+        this.storageSlides();
+        this.clearslides();
+        this.setState({slidesIndex:slidesIndex+1});
+      }
     }
 render(){
    let {imagearea,imageareaKey,imagelist,imageObjectList,videoObjectList} = this.state;
@@ -497,13 +690,13 @@ render(){
    let {curSecCol,curSecRow}=this.state;
    let {sectransform,seclist,secHead,secpre} = this.state;
    const props = {
-     action: '',
+     action: "",
      headers: {
        "Access-Control-Allow-Origin":"*"
      },
-     listType: 'picture',
+     listType: "picture",
      onChange: (file,fileList)=>{
-       console.log('file',file,'fileList',fileList);
+       console.log("file",file,"fileList",fileList);
      }
     };
    let showSeclist = seclist ?
@@ -514,35 +707,45 @@ render(){
       let showTextlist = textlist[colindex][rowindex] ?
         textlist[colindex][rowindex].map((text,tindex)=>(
           <PCEditorTextarea key={tindex} textkey={tindex}
+          contentEditable={this.state.contentEditable}
           getTextareaKey = {this.getTextareaKey.bind(this)}
+          getTextContent = {this.getTextContent.bind(this)}
+          getTextareaPosition={this.getTextareaPosition.bind(this)}
+          getTextareaSize={this.getTextareaSize.bind(this)}
           textarea={textarea[colindex][rowindex][tindex]} count = {tindex}
           showTextSider={this.showTextSider.bind(this)}/>
          ))
            :
-           '';
+           "";
        let showImagelist = imagelist[colindex][rowindex] ?
        imagelist[colindex][rowindex].map((image,index)=>(
          <PCEditorImagearea key={index} imagekey={index}
+         getImageContent = {this.getImageContent.bind(this)}
+         getImagePosition={this.getImagePosition.bind(this)}
+         getImageSize={this.getImageSize.bind(this)}
          getImageareaKey = {this.getImageareaKey.bind(this)}
          imagearea={imagearea[colindex][rowindex][index]} count = {index}
          imageObjectList={imageObjectList}
          showImageSider={this.showImageSider.bind(this)}/>
         ))
           :
-          '';
+          "";
       let showVideolist = videolist[colindex][rowindex] ?
       videolist[colindex][rowindex].map((video,index)=>{
         return(
         <PCEditorVideoarea key={index} videokey={index}
+        getVideoContent = {this.getVideoContent.bind(this)}
+        getVideoPosition={this.getVideoPosition.bind(this)}
+        getVideoSize={this.getVideoSize.bind(this)}
         getVideoareaKey = {this.getVideoareaKey.bind(this)}
         videoarea={videoarea[colindex][rowindex][index]} count = {index}
         videoObjectList={videoObjectList}
         showVideoSider={this.showVideoSider.bind(this)}/>
        )})
          :
-         '';
+         "";
       let secRow = (()=>(
-        <section key={colindex*100+rowindex} class="secs" style={{transform:sectransform[colindex][rowindex][0],transition: 'all 2s ease-in-out',position:"absolute",height:sectransform[colindex][rowindex][2],width:sectransform[colindex][rowindex][1]}}>
+        <section key={colindex*100+rowindex} class="secs" style={{transform:sectransform[colindex][rowindex][0],transition: "all 2s ease-in-out",position:"absolute",height:sectransform[colindex][rowindex][2],width:sectransform[colindex][rowindex][1]}}>
           {showTextlist}
           {showImagelist}
           {showVideolist}
@@ -554,34 +757,128 @@ render(){
  return secCollist;
 })
 :
-'';
+"";
+let showSlideslist = seclist ?
+ seclist.map((secCol,colindex)=>{
+   let secCollist=[] ;
+ for(let rowindex=0;rowindex<secCol.length;rowindex++){
+
+   let showTextlist = textlist[colindex][rowindex] ?
+     textlist[colindex][rowindex].map((text,index)=>(
+       <div key={index} style={{
+         margin:0,
+         position:"absolute",
+         height:textarea[colindex][rowindex][index][13],
+         width:textarea[colindex][rowindex][index][14],
+         padding:textarea[colindex][rowindex][index][11],
+         textAlign:textarea[colindex][rowindex][index][0],
+         fontSize:textarea[colindex][rowindex][index][1],
+         lineHeight:textarea[colindex][rowindex][index][2],
+         letterSpacing:textarea[colindex][rowindex][index][3]*0.1,
+         color:textarea[colindex][rowindex][index][4],
+         backgroundColor:textarea[colindex][rowindex][index][5],
+         borderWidth:textarea[colindex][rowindex][index][7],
+         borderStyle:textarea[colindex][rowindex][index][9],
+         borderRadius:textarea[colindex][rowindex][index][8],
+         borderColor:textarea[colindex][rowindex][index][10],
+         transform:textarea[colindex][rowindex][index][12]+" rotate("+textarea[colindex][rowindex][index][6]+"deg)",
+       }}>{text}</div>
+      ))
+        :
+        "";
+    let showImagelist = imagelist[colindex][rowindex] ?
+    imagelist[colindex][rowindex].map((image,index)=>(
+      <img key={index}
+        style={{
+        margin:0,
+        position:"absolute",
+        height:imagearea[colindex][rowindex][index][7],
+        width:imagearea[colindex][rowindex][index][8],
+        display:"block",
+        background: "#f0f0f0",
+        borderWidth:imagearea[colindex][rowindex][index][2],
+        borderStyle:imagearea[colindex][rowindex][index][4],
+        borderRadius:imagearea[colindex][rowindex][index][3],
+        borderColor:imagearea[colindex][rowindex][index][5],
+        opacity:imagearea[colindex][rowindex][index][1]*0.1,
+        borderRadius:imagearea[colindex][rowindex][index][3],
+        transform:imagearea[colindex][rowindex][index][6]+" rotate("+imagearea[colindex][rowindex][index][0]+"deg)",
+      }}
+       autoFocus="autofocus" src="./src/images/timg.jpg"/>
+     ))
+       :
+       "";
+   let showVideolist = videolist[colindex][rowindex] ?
+   videolist[colindex][rowindex].map((video,index)=>{
+     return(
+       <video key={index} controls="controls"
+       style={{
+       margin:0,
+       position:"absolute",
+       height:videoarea[colindex][rowindex][index][7],
+       width:videoarea[colindex][rowindex][index][8],
+       display:"block",
+       background: "#f0f0f0",
+       borderWidth:videoarea[colindex][rowindex][index][2],
+       borderStyle:videoarea[colindex][rowindex][index][4],
+       borderRadius:videoarea[colindex][rowindex][index][3],
+       borderColor:videoarea[colindex][rowindex][index][5],
+       opacity:videoarea[colindex][rowindex][index][1]*0.1,
+       borderRadius:videoarea[colindex][rowindex][index][3],
+       transform:videoarea[colindex][rowindex][index][6]+" rotate("+videoarea[colindex][rowindex][index][0]+"deg)",
+     }}>
+       <source src="./src/images/test.mp4"  type="video/mp4"/>
+       <source src="./src/images/test.mp4"  type="video/ogg"/>
+       <source src="./src/images/test.mp4"  type="video/webm"/>
+       </video>
+    )})
+      :
+      "";
+   let secRow = (()=>(
+     <section key={colindex*100+rowindex} class="secs" style={{transform:sectransform[colindex][rowindex][0],transition: "all 2s ease-in-out",position:"absolute",height:sectransform[colindex][rowindex][2],width:sectransform[colindex][rowindex][1]}}>
+       {showTextlist}
+       {showImagelist}
+       {showVideolist}
+     </section>)
+   )();
+
+    secCollist.push(secRow);
+    }
+return secCollist;
+})
+:
+"";
+
     return (
         <div>
         <PCHeader/>
             <Layout>
-              <Sider class="sider" width="80" style={{ overflow: 'scroll', height: '90vh', position:'fixed', left: 0 }}>
-                    <Button htmlType="button" id="tool-btn1" title="预览">
+              <Sider class="sider" width="80" style={{ overflow: "scroll", height: "90vh", position:"fixed", left: 0 }}>
+                    <Button htmlType="button" id="tool-btn1" title="预览" onClick={this.showviwer.bind(this)}>
                       <Icon class="tool-icon" type="scan" />
                     </Button>
-                    <Button htmlType="button" id="tool-btn2" title="撤销">
+                    {/*<Button htmlType="button" id="tool-btn2" title="撤销">
                       <Icon class="tool-icon" type="rollback" />
+                    </Button>*/}
+                    <Button htmlType="button" id="tool-btn5" title="删除" onClick={this.deleteAllSlides.bind(this)}>
+                      <Icon class="tool-icon" type="delete" />
                     </Button>
-                    <Button htmlType="button" id="tool-btn3" title="保存" onClick={this.storageSlides.bind(this)}>
-                      <Icon class="tool-icon" type="save" />
+                    <Button htmlType="button" id="tool-btn6" title="新建幻灯片" onClick={this.newSlides.bind(this)}>
+                      <Icon class="tool-icon" type="plus" />
                     </Button>
+                    {/*<Button htmlType="button" id="tool-btn7" title="设置">
+                      <Icon class="tool-icon" type="setting" />
+                    </Button>*/}
                     <Link target="_blank" to={`/player`}>
                     <Button htmlType="button" id="tool-btn4" title="播放">
                       <Icon class="tool-icon" type="caret-right" />
                     </Button>
                     </Link>
-                    <Button htmlType="button" id="tool-btn5" title="删除">
-                      <Icon class="tool-icon" type="delete" />
-                    </Button>
-                    <Button htmlType="button" id="tool-btn6" title="设置">
-                      <Icon class="tool-icon" type="setting" />
+                    <Button htmlType="button" id="tool-btn3" title="保存" onClick={this.storageSlides.bind(this)}>
+                      <Icon class="tool-icon" type="save" />
                     </Button>
               </Sider>
-              <Sider class="sider" id="func-menu" width="210" style={{ visibility:this.state.originSider,opacity:this.state.originSiderop, overflow: 'scroll', height: '90vh', position: 'fixed', left: 80,transition: 'opacity 0.5s linear'}}>
+              <Sider class="sider" id="func-menu" width="210" style={{ visibility:this.state.originSider,opacity:this.state.originSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80,transition: "opacity 0.5s linear"}}>
                 <Button htmlType="button" id="text" title="添加文本"  onClick={this.showtext.bind(this)}>
                   <Icon class="tool-icon" type="file-text" />
                 </Button>
@@ -592,14 +889,17 @@ render(){
                 </Upload>
                 <Upload
                 accept="vedio"
-                action= ''
+                action= ""
                 onChange={this.uploadVideo.bind(this)}>
                 <Button htmlType="button" id="video" title="添加视频" onClick={this.showvideo.bind(this)}>
                     <Icon class="tool-icon" type="video-camera" />
                 </Button>
                 </Upload>
+                <Button htmlType="button" id="deleteSlide" title="删除当前幻灯片"  onClick={this.deleteSlides.bind(this)}>
+                  <Icon class="tool-icon" type="delete" />
+                </Button>
               </Sider>
-              <Sider class="sider" id="text-menu" width="210" style={{visibility:this.state.textSider,opacity:this.state.textSiderop, overflow: 'scroll', height: '90vh', position: 'fixed', left: 80,transition:'opacity 0.5s linear', }}>
+              <Sider class="sider" id="text-menu" width="210" style={{visibility:this.state.textSider,opacity:this.state.textSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80,transition:"opacity 0.5s linear", }}>
                   <PCEditorTextsidebar
                   showOriginSider={this.showOriginSider.bind(this)}
                   getTextAlignKey={this.getTextAlignKey.bind(this)}
@@ -613,9 +913,10 @@ render(){
                   textColorChange={this.textColorChange.bind(this)}
                   borderColorChange={this.borderColorChange.bind(this)}
                   backgroundColorChange={this.backgroundColorChange.bind(this)}
+                  deleteText={this.deleteText.bind(this)}
                   />
               </Sider>
-              <Sider class="sider" id="image-menu" width="200" style={{visibility:this.state.imagesSider,opacity:this.state.imagesSiderop, overflow: 'scroll', height: '90vh', position: 'fixed', left: 80 ,transition: 'opacity 0.5s linear',}}>
+              <Sider class="sider" id="image-menu" width="200" style={{visibility:this.state.imagesSider,opacity:this.state.imagesSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80 ,transition: "opacity 0.5s linear",}}>
                 <PCEditorImagesidebar
                 showOriginSider={this.showOriginSider.bind(this)}
                 irotationChange={this.irotationChange.bind(this)}
@@ -626,7 +927,7 @@ render(){
                 imageObjectList={this.state.imageObjectList}
                 />
               </Sider>
-              <Sider class="sider" id="video-menu" width="200" style={{visibility:this.state.videoSider,opacity:this.state.videoSiderop, overflow: 'scroll', height: '90vh', position: 'fixed', left: 80,transition:'opacity 0.5s linear', }}>
+              <Sider class="sider" id="video-menu" width="200" style={{visibility:this.state.videoSider,opacity:this.state.videoSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80,transition:"opacity 0.5s linear", }}>
                 <PCEditorVideosidebar
                 showOriginSider={this.showOriginSider.bind(this)}
                 vrotationChange={this.vrotationChange.bind(this)}
@@ -635,22 +936,34 @@ render(){
                 vborderRadiusChange={this.vborderRadiusChange.bind(this)}
                 vborderColorChange={this.vborderColorChange.bind(this)}/>
               </Sider>
-              <Content style={{position:'fixed',overflow:'hidden', left:300,width:"74%",height:"90%",margin: '0 16px',backgroundColor:"#ddd", padding: 0, minHeight: 280 }}>
+              <Content style={{position:"fixed",overflow:"hidden", left:300,width:"74%",height:"90%",margin: "0 16px",backgroundColor:"#ddd", padding: 0, minHeight: 280 }}>
 
-                  <div id="slides" style={{margin:'auto',backgroundColor:"#fff",margin:'10px auto',width:"98%",height:"98%",overflow:"visible",position:"relative"}}>
+                  <div id="slides" style={{margin:"auto",backgroundColor:"#fff",margin:"10px auto",width:"98%",height:"98%",overflow:"visible",position:"relative"}}>
                     {showSeclist}
                   </div>
-                  <aside class="control" style={{position:'absolute',right:0,bottom:0}}>
+                  <aside class="control" style={{position:"absolute",right:0,bottom:0}}>
                     <Button id="navigator-up" htmlType="button"  onClick={this.navigatorDre.bind(this)}><Icon type="up" /></Button>
                     <Button id="navigator-down" htmlType="button"  onClick={this.navigatorDre.bind(this)} ><Icon type="down" /></Button>
                     <Button id="navigator-left" htmlType="button"  onClick={this.navigatorDre.bind(this)} ><Icon type="left" /></Button>
                     <Button id="navigator-right" htmlType="button"  onClick={this.navigatorDre.bind(this)} ><Icon type="right" /></Button>
                   </aside>
-                  <Button class="add-slides" htmlType="button" onClick={this.addRightSlides.bind(this)} style={{position:'absolute',height:'50px',width:'50px',padding:0,boxSizing:'border-box',border:'none',top:'50%',right:0,fontSize:50,textarea:'center',background:'none'}}><Icon type="plus-circle-o"/></Button>
-                  <Button class="add-slides" htmlType="button" onClick={this.addDownSlides.bind(this)} style={{position:'absolute',height:'50px',width:'50px',padding:0,boxSizing:'border-box',border:'none',bottom:0,left:'50%',fontSize:50,textarea:'center',background:'none'}}><Icon type="plus-circle-o" /></Button>
-
+                  <Button class="add-slides" htmlType="button" onClick={this.addRightSlides.bind(this)} style={{position:"absolute",height:"50px",width:"50px",padding:0,boxSizing:"border-box",border:"none",top:"50%",right:0,fontSize:50,textarea:"center",background:"none"}}><Icon type="plus-circle-o"/></Button>
+                  <Button class="add-slides" htmlType="button" onClick={this.addDownSlides.bind(this)} style={{position:"absolute",height:"50px",width:"50px",padding:0,boxSizing:"border-box",border:"none",bottom:0,left:"50%",fontSize:50,textarea:"center",background:"none"}}><Icon type="plus-circle-o" /></Button>
+                  <Button class="deleteslides"><Icon type="delete" /></Button>
               </Content>
             </Layout>
+            <div id="viewer" style={{position:"absolute",overflow:"hidden",margin:0,padding:0,top:0,left:0,right:0,bottom:0,background:"#a0a0a0",display:this.state.viewerDispaly}}>
+              <div id="slides" style={{margin:"auto",overflow:"hidden",backgroundColor:"#fff",margin:"30px auto",width:"72%",height:"90%",position:"relative"}}>
+                {showSlideslist}
+              </div>
+              <aside class="control" style={{position:"absolute",right:0,bottom:0}}>
+                <Button id="navigator-up" htmlType="button"  onClick={this.navigatorDre.bind(this)}><Icon type="up" /></Button>
+                <Button id="navigator-down" htmlType="button"  onClick={this.navigatorDre.bind(this)} ><Icon type="down" /></Button>
+                <Button id="navigator-left" htmlType="button"  onClick={this.navigatorDre.bind(this)} ><Icon type="left" /></Button>
+                <Button id="navigator-right" htmlType="button"  onClick={this.navigatorDre.bind(this)} ><Icon type="right" /></Button>
+              </aside>
+              <Button class="close" htmlType="button" onClick={this.closeviwer.bind(this)} style={{position:"absolute",height:"50px",width:"50px",padding:0,boxSizing:"border-box",border:"none",top:"2%",right:0,fontSize:50,textAlign:"center",background:"none"}}><Icon type="close" /></Button>
+            </div>
             </div>
 
     );

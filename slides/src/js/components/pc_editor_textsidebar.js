@@ -1,6 +1,6 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import SketchPicker from 'react-color';
+import React from "react";
+import ReactDOM from "react-dom";
+import SketchPicker from "react-color";
 import {
   Row,
   Col,
@@ -13,7 +13,7 @@ import {
   Radio,
   Input,
   Select,
-} from 'antd';
+} from "antd";
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const { Footer,Content,Sider } = Layout;
@@ -131,12 +131,12 @@ render(){
 
     return (
         <div>
-        <div class='back' style={{textAlign:"center"}}>
+        <div class="back" style={{textAlign:"center"}}>
         <Button type="Dash" onClick={this.props.showOriginSider}>
           <Icon type="left" />Backward
         </Button>
         </div>
-          <div class='text-func'>
+          <div class="text-func">
             <p>Text Alignment</p>
             <RadioGroup onChange={this.props.getTextAlignKey} defaultValue="left">
               <RadioButton style={{height:30,width:40,padding:"6px 0px",textAlign:"center"}} value="left"><img src="../../../src/images/text-left.svg" style={{height:18,width:20}} title="左对齐"/></RadioButton>
@@ -146,7 +146,7 @@ render(){
             </RadioGroup>
 
           </div>
-          <div class='text-func'>
+          <div class="text-func">
             <p>Font size</p>
             <Row>
               <Col span={12}>
@@ -156,14 +156,14 @@ render(){
                 <InputNumber
                   min={1}
                   max={100}
-                  style={{ marginLeft: 16,width:45,display:'inline-block' }}
+                  style={{ marginLeft: 16,width:45,display:"inline-block" }}
                   value={this.state.fontValue}
                   onChange={this.handleFontChange.bind(this)}
                 />
               </Col>
             </Row>
           </div>
-          <div class='text-func'>
+          <div class="text-func">
             <p>Line Height</p>
             <Row>
               <Col span={12}>
@@ -173,14 +173,14 @@ render(){
                 <InputNumber
                   min={1}
                   max={100}
-                  style={{ marginLeft: 16,width:45,display:'inline-block' }}
+                  style={{ marginLeft: 16,width:45,display:"inline-block" }}
                   value={this.state.lineHeightValue}
                   onChange={this.handleLineHeightChange.bind(this)}
                 />
               </Col>
             </Row>
           </div>
-          <div class='text-func'>
+          <div class="text-func">
             <p>Letter Spacing</p>
             <Row>
               <Col span={12}>
@@ -190,26 +190,26 @@ render(){
                 <InputNumber
                   min={1}
                   max={100}
-                  style={{ marginLeft: 16,width:45,display:'inline-block' }}
+                  style={{ marginLeft: 16,width:45,display:"inline-block" }}
                   value={this.state.letterSpacingValue}
                   onChange={this.handleletterSpacingChange.bind(this)}
                 />
               </Col>
             </Row>
           </div>
-          <div class='text-func'>
+          <div class="text-func">
             <p>Text Color</p>
             <Popover placement="right"  content={<SketchPicker color={this.state.textColorValue}  onChangeComplete={this.handleTextColorChange.bind(this)} type="sketch" />} trigger="click">
               <Button>Pick Color</Button>
             </Popover>
           </div>
-          <div class='text-func'>
+          <div class="text-func">
             <p>Background Color</p>
             <Popover placement="right"  content={<SketchPicker color={this.state.backgroundColorValue}  onChangeComplete={this.handleBackgroundColorChange.bind(this)} type="sketch" />} trigger="click">
               <Button>Pick Color</Button>
             </Popover>
           </div>
-          <div class='text-func'>
+          <div class="text-func">
             <p>Rotation</p>
             <Row>
               <Col span={12}>
@@ -219,14 +219,14 @@ render(){
                 <InputNumber
                   min={0}
                   max={360}
-                  style={{ marginLeft: 16,width:45,display:'inline-block' }}
+                  style={{ marginLeft: 16,width:45,display:"inline-block" }}
                   value={this.state.rotationValue}
                   onChange={this.handlerotationChange.bind(this)}
                 />
               </Col>
             </Row>
           </div>
-          <div class='text-func'>
+          <div class="text-func">
             <p>border width</p>
             <Row>
               <Col span={12}>
@@ -236,14 +236,14 @@ render(){
                 <InputNumber
                   min={1}
                   max={100}
-                  style={{ marginLeft: 16,width:45,display:'inline-block' }}
+                  style={{ marginLeft: 16,width:45,display:"inline-block" }}
                   value={this.state.borderWidthValue}
                   onChange={this.handleborderWidthChange.bind(this)}
                 />
               </Col>
             </Row>
           </div>
-          <div class='text-func'>
+          <div class="text-func">
             <p>border radius</p>
             <Row>
               <Col span={12}>
@@ -253,14 +253,14 @@ render(){
                 <InputNumber
                   min={1}
                   max={100}
-                  style={{ marginLeft: 16,width:45,display:'inline-block' }}
+                  style={{ marginLeft: 16,width:45,display:"inline-block" }}
                   value={this.state.borderRadiusValue}
                   onChange={this.handleborderRadiusChange.bind(this)}
                 />
               </Col>
             </Row>
           </div>
-          <div class='text-func'>
+          <div class="text-func">
             <p>border style</p>
             <Select defaultValue="solid" style={{ width: 120 }} onChange={this.handleborderStyleChange.bind(this)}>
               <Option value="solid">solid</Option>
@@ -268,14 +268,17 @@ render(){
               <Option value="none">none</Option>
             </Select>
           </div>
-          <div class='text-func'>
+          <div class="text-func">
             <p>border color</p>
             <Popover placement="right"  content={<SketchPicker color={this.state.borderColorValue}  onChangeComplete={this.handleBorderColorChange.bind(this)} type="sketch"/>} trigger="click">
               <Button>Pick Color</Button>
             </Popover>
           </div>
-          <div class='text-func'>
+          <div class="text-func">
             <p>Animation</p>
+          </div>
+          <div class="text-func">
+            <Button class="delete" onClick={this.props.deleteText.bind(this)}><Icon type="delete" /></Button>
           </div>
         </div>
 
