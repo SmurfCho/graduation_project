@@ -1,6 +1,6 @@
-import React from 'react';
-import { Row,Col } from 'antd';
-import {Link} from 'react-router-dom';
+import React from "react";
+import { Row,Col } from "antd";
+import {Link} from "react-router-dom";
 import {
 	Menu,
 	Icon,
@@ -11,7 +11,7 @@ import {
 	Button,
 	CheckBox,
 	Modal
- } from 'antd';
+ } from "antd";
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 const FormItem =Form.Item;
@@ -21,18 +21,26 @@ class PCHeader extends React.Component{
 	constructor(){
 		super();
 		this.state = {
-			current: 'top',
+			current: "top",
 			modalVisible: false,
-			action: 'login',
+			action: "login",
 			hasLogined: false,
-			userNickName: '',
-			userId: 0
+			userNickName: "",
+			userId: 0,
+			slidesIndex:0,
 		};
 	}
+	componentDidMount(){
+		let userid = localStorage.userid;
+		let slideslistStr = localStorage.getItem(userid);
+		let slideslist = JSON.parse(slideslistStr);
+		console.log("slideslist",slideslist);
 
+		slideslist?this.setState({slidesIndex:slideslist.length}):this.setState({slidesIndex:0});
+	}
 	componentWillMount(){
 		console.log(localStorage);
-		if(localStorage.userid!=''&&localStorage.userid != 'undefined'){
+		if(localStorage.userid!=""&&localStorage.userid != "undefined"){
 			this.setState({hasLogined:true});
 			this.setState({userNickName:localStorage.userNickName,userId:localStorage.userid})
 		}
@@ -43,7 +51,7 @@ class PCHeader extends React.Component{
 
 	handleClick(e){
 		if(e.key == "register"){
-			this.setState({current:'register'});
+			this.setState({current:"register"});
 			this.setModalVisible(true);
 		}else{
 
@@ -55,7 +63,7 @@ class PCHeader extends React.Component{
 	handleSubmit(e){
 		e.preventDefault();
 		var myFetchOptions = {
-			method: 'GET'
+			method: "GET"
 		};
 		var formData = this.props.form.getFieldsValue();
 
@@ -79,15 +87,15 @@ class PCHeader extends React.Component{
 
 	callback(key){
 		if(key == 1){
-			this.setState({action:'login'});
+			this.setState({action:"login"});
 		}else if(key == 2){
-			this.setState({action:'register'});
+			this.setState({action:"register"});
 		}
 	};
 
 	logout(){
-		localStorage.userid = '';
-		localStorage.userNickName = '';
+		localStorage.userid = "";
+		localStorage.userNickName = "";
 		this.setState({hasLogined:false});
 	}
 	render(){
@@ -97,13 +105,13 @@ class PCHeader extends React.Component{
 		?
 		<Menu.Item key="logout" class="register">
 			<p class="linkStyle">
-			<Link target="_blank" to={`/editor`}>
-				<Button type="primary" htmlType="button">{this.state.userNickName}</Button>
+			<Link target="_self" to={`/editor/${this.state.slidesIndex}`}>
+				<Button type="primary" htmlType="button">pc_editor</Button>
 			</Link>
 			</p>
 			&nbsp;&nbsp;
 			<p class="linkStyle">
-			<Link target="_blank" to={`/usercenter`}>
+			<Link target="_self" to={`/usercenter`}>
 				<Button type="dashed" htmlType="button">个人中心</Button>
 			</Link>
 			</p>
@@ -140,10 +148,10 @@ class PCHeader extends React.Component{
 								<TabPane tab="登录" key="1">
 									<Form layout="horizontal" onSubmit={this.handleSubmit.bind(this)}>
 										<FormItem label="账户" >
-											{getFieldDecorator('userName')(<Input placeholder="请输入您的账号" />)}
+											{getFieldDecorator("userName")(<Input placeholder="请输入您的账号" />)}
 										</FormItem>
 										<FormItem label="密码" >
-										{getFieldDecorator('password')(<Input type="password" placeholder="请输入您的密码" />)}
+										{getFieldDecorator("password")(<Input type="password" placeholder="请输入您的密码" />)}
 										</FormItem>
 										<Button type="primary" htmlType="submit">登录</Button>
 									</Form>
@@ -152,13 +160,13 @@ class PCHeader extends React.Component{
 								<TabPane tab="注册" key="2">
 									<Form layout="horizontal" onSubmit={this.handleSubmit.bind(this)}>
 										<FormItem label="账户" >
-											{getFieldDecorator('r_userName')(<Input placeholder="请输入您的账号" />)}
+											{getFieldDecorator("r_userName")(<Input placeholder="请输入您的账号" />)}
 										</FormItem>
 										<FormItem label="密码" >
-										{getFieldDecorator('r_password')(<Input type="password" placeholder="请输入您的密码" />)}
+										{getFieldDecorator("r_password")(<Input type="password" placeholder="请输入您的密码" />)}
 										</FormItem>
 										<FormItem label="确认密码" >
-										{getFieldDecorator('r_confirmPassword')(<Input type="password" placeholder="请输入您的账号" />)}
+										{getFieldDecorator("r_confirmPassword")(<Input type="password" placeholder="请输入您的账号" />)}
 										</FormItem>
 										<Button type="primary" htmlType="submit">注册</Button>
 									</Form>

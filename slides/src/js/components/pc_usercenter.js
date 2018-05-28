@@ -1,7 +1,8 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import {Row,Col,Modal} from 'antd';
-import { Menu,Icon} from 'antd';
+import React from "react";
+import ReactDOM from "react-dom";
+import {Link} from "react-router-dom";
+import {Row,Col,Modal} from "antd";
+import { Menu,Icon} from "antd";
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 import {
@@ -13,22 +14,24 @@ import {
   CheckBox,
   Card,
   notification,
-  Upload
-} from 'antd';
+  Upload,
+} from "antd";
 const FormItem = Form.Item;
 const TabPane = Tabs.TabPane;
-import { BrowserRouter as Router,Switch,Route } from 'react-router-dom';
-import PCHeader from './pc_header';
-import PCFooter from './pc_footer';
+import { BrowserRouter as Router,Switch,Route } from "react-router-dom";
+import PCHeader from "./pc_header";
+import PCFooter from "./pc_footer";
 
 export default class PCUserCenter extends React.Component{
   constructor(){
     super();
     this.state = {
-      userwork: '',
-      usercollection:'',
-      previewImage: '',
-      previewVisible: false
+      userwork: "",
+      usercollection:"",
+      previewImage: "",
+      previewVisible: false,
+      slideslist:"",
+      userid:"",
     };
   };
   handleCancel(e){
@@ -36,9 +39,9 @@ export default class PCUserCenter extends React.Component{
       previewVisible: false,
     });
   }
-  /*componentDidMount(){
-    var myFetchOptions = {
-      method: 'GET'
+  componentDidMount(){
+    /*var myFetchOptions = {
+      method: "GET"
     };
     fetch( ,myFetchOptions)
     .then(response=>response.json())
@@ -49,15 +52,31 @@ export default class PCUserCenter extends React.Component{
     .then(response=>response.json())
     .then(json=>{
       this.setState({});
-    });
-  };*/
+    });*/
+
+    let userid = localStorage.userid;
+    let slideslistStr = localStorage.getItem(userid);
+    let slideslist = JSON.parse(slideslistStr);
+    slideslist = slideslist ? slideslist : [];
+    console.log("slideslist",slideslist);
+    this.setState({slideslist:slideslist,userid:userid});
+  };
+  deleteSlides(e){
+    let {slideslist,userid} = this.state;
+    let index = parseInt(e.target.id);
+    slideslist.splice(index,1);
+    let slideslistStr = JSON.stringify(slideslist);
+    localStorage.setItem(userid,slideslistStr);
+    this.setState({slideslist:slideslist});
+  }
+
   render(){
     const props = {
-      action: '',
+      action: "",
       headers: {
         "Access-Control-Allow-Origin":"*"
       },
-      listType: 'picture-card',
+      listType: "picture-card",
       defaultFileList:[
 
       ],
@@ -66,9 +85,28 @@ export default class PCUserCenter extends React.Component{
       }
     };
     const {userwork,usercollection} = this.state;
-    const userworkList = userwork.length ?
-    usercollection.map(()=>(
-      <Card>
+    const {slideslist,userid} = this.state;
+    const showslideslist = userwork? userwork : slideslist;
+    const userworkList = showslideslist.length ?
+    showslideslist.map((slides,index)=>(
+
+      <Card key={index} >
+        <Row>
+        <Col span={18}>
+          <Link to={`/player/${index}`}  target="_blank">
+            <span>{index+1}&nbsp;&nbsp;&nbsp;{slides.slidesName}</span>
+          </Link>
+        </Col>
+        <Col span={6}>
+          <Link to={`/player/${index}`}  target="_blank">
+            <Button style={{marginRight:10}}>播放</Button>
+          </Link>
+          <Link to={`/editor/${index}`}  target="_self">
+            <Button style={{marginRight:10}}>编辑</Button>
+          </Link>
+          <Button id={index} style={{marginRight:60}} onClick={this.deleteSlides.bind(this)}>删除</Button>
+        </Col>
+        </Row>
       </Card>
     ))
     :

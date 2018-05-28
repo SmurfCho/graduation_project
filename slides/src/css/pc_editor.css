@@ -8,7 +8,7 @@
   padding:5px;
   margin-top: 10px;
 }
-#text,#images,#video{
+#text,#images,#video,#deleteSlide{
   position: relative;
   display: block;
   margin:auto;
