@@ -67,7 +67,6 @@ export default class PCEditor extends React.Component{
 
     let userid = localStorage.userid;
     let slidesIndex = this.props.match.params.curslidesIndex;
-    console.log("slidesIndex",slidesIndex);
     let slideslistStr = localStorage.getItem(userid);
     let slideslist = slideslistStr?JSON.parse(slideslistStr):[];
     if(slideslist != [] && slideslist[slidesIndex] != null){
@@ -76,7 +75,6 @@ export default class PCEditor extends React.Component{
       textlist:slides.textlist,imagelist:slides.imagelist,videolist:slides.videolist,
       textarea:slides.textarea,imagearea:slides.imagearea,videoarea:slides.videoarea,transform:slides.transform,sectransform:slides.sectransform,slidesName:slides.curslidesName});
     }
-    console.log("slideslist",slideslist,"textarea",textarea,"textlist",this.state.textlist);
     this.setState({slideslist:slideslist,userid:userid,slidesIndex:this.props.match.params.curslidesIndex});
   }
 
@@ -164,8 +162,7 @@ export default class PCEditor extends React.Component{
     uploadImage({ file, fileList }){
       let imageObjectList = this.state.imageObjectList;/*
       let url = file.url;
-      imageObjectList.push(url);*/
-      console.log(file,fileList);/*
+      imageObjectList.push(url);*//*
       this.setState(imageObjectList:imageObjectList);
       if (file.status !== "uploading") {
     }*/
@@ -191,7 +188,6 @@ export default class PCEditor extends React.Component{
     let url = file.url;/*
     videoObjectList.push(url);
     this.setState(videoObjectList:videoObjectList)*/
-    console.log(file,fileList);
   }
  showvideo(e){
    this.showVideoSider(e);
@@ -301,7 +297,6 @@ export default class PCEditor extends React.Component{
       let {curSecCol,curSecRow}=this.state;
       let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
       textarea[curSecCol][curSecRow][textareaKey][9]=e;
-      console.log(e);
       this.setState({textarea:textarea});
     }
     textColorChange(color){
@@ -435,9 +430,9 @@ export default class PCEditor extends React.Component{
       textarea[curSecCol+1].splice([curSecRow],0,[]);
       imagearea[curSecCol+1].splice([curSecRow],0,[]);
       videoarea[curSecCol+1].splice([curSecRow],0,[]);
-      console.log("seclist:",seclist,"curSecRow",curSecRow,"curSecCol",curSecCol,"textlist",textlist);
       this.setState({seclist:seclist,secNum:secNum+1,sectransform:sectransform,curSecCol:curSecCol+1,curSecRow:0,
       textlist:textlist,imagelist:imagelist,videolist:videolist,textarea:textarea,imagearea:imagearea,videoarea:videoarea});
+      console.log("seclist",seclist);
     };
     addDownSlides(){
       let{seclist,secNum,currentSecindex,sectransform,curSecCol,curSecRow,textlist,imagelist,videolist,textarea,imagearea,videoarea} = this.state;
@@ -451,9 +446,10 @@ export default class PCEditor extends React.Component{
       textarea[curSecCol].splice([curSecRow+1],0,[]);
       imagearea[curSecCol].splice([curSecRow+1],0,[]);
       videoarea[curSecCol].splice([curSecRow+1],0,[]);
-      console.log("seclist:",seclist,"curSecRow",curSecRow,"curSecCol",curSecCol,"textlist",textlist);
       this.setState({seclist:seclist,secNum:secNum+1,sectransform:sectransform,curSecRow:curSecRow+1,
       textlist:textlist,imagelist:imagelist,videolist:videolist,textarea:textarea,imagearea:imagearea,videoarea:videoarea});
+      console.log("seclist",seclist);
+
 
     };
     navigatorDre(e){
@@ -552,14 +548,12 @@ export default class PCEditor extends React.Component{
         slideslist.push(slidesJSON);
         this.setState({curslidesName:slidesName});
       };
-      console.log("slideslist",slideslist);
       let slideslistStr = JSON.stringify(slideslist);
       localStorage.setItem(userid,slideslistStr);
       this.setState({slideslist:slideslist});
       /*以下是用于测试的内容*/
       let localInfo = localStorage.getItem(userid);
       let jsonlocalInfo = JSON.parse(localInfo);
-      console.log("jsonlocalInfo",jsonlocalInfo);
     }
     showviwer(){
       this.setState({viewerDispaly:"block",contentEditable:"false"});
@@ -571,7 +565,6 @@ export default class PCEditor extends React.Component{
         let {curSecCol,curSecRow,textlist,textareaKey}=this.state;
         textlist[curSecCol][curSecRow][textareaKey] = e.target.textContent;
         this.setState({textlist:textlist});
-        console.log("textlist:",textlist);
     }
     getTextareaPosition(e){
       let {curSecCol,curSecRow,textarea,textareaKey}=this.state;
@@ -588,7 +581,6 @@ export default class PCEditor extends React.Component{
         let {curSecCol,curSecRow,imagelist,imageareaKey}=this.state;
         imagelist[curSecCol][curSecRow][imageareaKey] = e.target.src;
         this.setState({imagelist:imagelist});
-        console.log("imagelist:",imagelist);
     }
     getImagePosition(e){
       let {curSecCol,curSecRow,imagearea,imageareaKey}=this.state;
@@ -605,7 +597,6 @@ export default class PCEditor extends React.Component{
         let {curSecCol,curSecRow,videolist,videoareaKey}=this.state;
         videolist[curSecCol][curSecRow][videoareaKey] = e.target.src;
         this.setState({videolist:videolist});
-        console.log("videolist:",videolist);
     }
     getVideoPosition(e){
       let {curSecCol,curSecRow,videoarea,videoareaKey}=this.state;
@@ -622,7 +613,6 @@ export default class PCEditor extends React.Component{
       let{textarea,textareaKey,textlist,curSecRow,curSecCol} = this.state;
       textlist[curSecCol][curSecRow].splice([textareaKey],1);
       textarea[curSecCol][curSecRow].splice([textareaKey],1);
-      console.log("textlist",textlist);
       this.setState({textlist:textlist,textarea:textarea});
     }
     deleteSlides(e){
@@ -637,13 +627,13 @@ export default class PCEditor extends React.Component{
         textarea.splice([curSecCol],1);
         imagearea.splice([curSecCol],1);
         videoarea.splice([curSecCol],1);
-        if(seclist[curSecCol][curSecRow] == "y"){/*列数大于1,且总列数大于当前页码，则向后一列移动*/
+        if(seclist.length>curSecCol&&seclist[curSecCol][curSecRow] == "y"){/*列数大于1,且总列数大于当前页码，则向后一列移动*/
           sectransform[curSecCol][curSecRow][0]="translate(0,0)";
         }else if(seclist[curSecCol-1][curSecRow] && seclist[curSecCol-1][curSecRow] == "y"){
           sectransform[curSecCol-1][curSecRow][0]="translate(0,0)";
           curSecCol=curSecCol-1;
         }
-      }else if(seclist.length == 1 && seclist[curSecCol].length > 1){
+      }else if(seclist.length >= 1 && seclist[curSecCol].length > 1){
         seclist[curSecCol].splice([curSecRow],1);
         sectransform[curSecCol].splice([curSecRow],1);
         textlist[curSecCol].splice([curSecRow],1);
@@ -668,7 +658,8 @@ export default class PCEditor extends React.Component{
         imagearea[curSecCol].splice([curSecRow],1,[]);
         videoarea[curSecCol].splice([curSecRow],1,[]);
       }
-      console.log("seclist:",seclist,"curSecRow",curSecRow,"curSecCol",curSecCol,"textlist",textlist);
+      console.log("seclist",seclist);
+
       this.setState({seclist:seclist,secNum:secNum+1,sectransform:sectransform,curSecRow:curSecRow,curSecCol:curSecCol,
       textlist:textlist,imagelist:imagelist,videolist:videolist,textarea:textarea,imagearea:imagearea,videoarea:videoarea});
     }
@@ -686,6 +677,7 @@ export default class PCEditor extends React.Component{
         this.clearslides();
         slideslist[slidesIndex]?slideslist.splice(slidesIndex,1):"";
         this.setState({slideslist:slideslist});
+        this.storageSlides();
       }
     };
     newSlides(){
@@ -712,7 +704,6 @@ render(){
    let {imagearea,imageareaKey,imagelist,imageObjectList,videoObjectList} = this.state;
    let {videoarea,videoareaKey,videolist} = this.state;
    let {textarea,textareaKey,textlist}=this.state;
-   console.log("textarea in render",textarea);
    let {curSecCol,curSecRow}=this.state;
    let {sectransform,seclist,slidesIndex} = this.state;
    const props = {
@@ -722,7 +713,6 @@ render(){
      },
      listType: "picture",
      onChange: (file,fileList)=>{
-       console.log("file",file,"fileList",fileList);
      }
     };
    let showSeclist = seclist ?
