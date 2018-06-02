@@ -16,6 +16,11 @@ const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
 const FormItem =Form.Item;
 const TabPane = Tabs.TabPane;
+import AV from "leancloud-storage";
+// 存储服务
+
+
+
 class PCHeader extends React.Component{
 
 	constructor(){
@@ -59,6 +64,46 @@ class PCHeader extends React.Component{
 
 		}
 	};
+	signUp(e){
+		e.preventDefault();
+		var formData = this.props.form.getFieldsValue();
+		var username = formData.r_userName;
+  	var password = formData.r_password;
+		var email = formData.r_email;
+		var user = new AV.User();
+		user.setUsername(username);
+	  user.setPassword(password);
+	  user.setEmail(email);
+	  user.signUp().then(function(loginedUser) {
+			console.log(loginedUser);
+			localStorage.userid = loginedUser.id;
+			localStorage.username = loginedUser.attributes.username;
+			return 1;
+		})
+		.then((v)=>{v=1?this.setState({hasLogined:true,modalVisible:false}):''})
+		.catch(function (error) {
+		    alert(JSON.stringify(error));
+				return 0;
+		  });
+	}
+	logIn(e){
+		e.preventDefault();
+		var formData = this.props.form.getFieldsValue();
+		var username = formData.userName;
+  	var password = formData.password;
+		AV.User.logIn(username, password)
+		.then(function(loginedUser) {
+			console.log(loginedUser);
+			localStorage.userid = loginedUser.id;
+			localStorage.username = loginedUser.attributes.username;
+			return 1;
+		})
+		.then((v)=>{v=1?this.setState({hasLogined:true,modalVisible:false}):''})
+		.catch(function (error) {
+		    alert(JSON.stringify(error));
+				return 0;
+		  });
+		};
 
 	handleSubmit(e){
 		e.preventDefault();
@@ -146,7 +191,7 @@ class PCHeader extends React.Component{
 							<Tabs type="card" onChange={this.callback.bind(this)}>
 
 								<TabPane tab="登录" key="1">
-									<Form layout="horizontal" onSubmit={this.handleSubmit.bind(this)}>
+									<Form layout="horizontal" onSubmit={this.logIn.bind(this)}>
 										<FormItem label="账户" >
 											{getFieldDecorator("userName")(<Input placeholder="请输入您的账号" />)}
 										</FormItem>
@@ -158,15 +203,15 @@ class PCHeader extends React.Component{
 								</TabPane>
 
 								<TabPane tab="注册" key="2">
-									<Form layout="horizontal" onSubmit={this.handleSubmit.bind(this)}>
+									<Form layout="horizontal" onSubmit={this.signUp.bind(this)}>
 										<FormItem label="账户" >
 											{getFieldDecorator("r_userName")(<Input placeholder="请输入您的账号" />)}
 										</FormItem>
 										<FormItem label="密码" >
 										{getFieldDecorator("r_password")(<Input type="password" placeholder="请输入您的密码" />)}
 										</FormItem>
-										<FormItem label="确认密码" >
-										{getFieldDecorator("r_confirmPassword")(<Input type="password" placeholder="请输入您的账号" />)}
+										<FormItem label="邮箱" >
+										{getFieldDecorator("r_email")(<Input type="email" placeholder="请输入您的邮箱" />)}
 										</FormItem>
 										<Button type="primary" htmlType="submit">注册</Button>
 									</Form>

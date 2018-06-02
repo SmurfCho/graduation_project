@@ -8,7 +8,14 @@ import PCEditor from "./components/pc_editor";
 import PCPlayer from "./components/pc_player";
 import PCUserCenter from "./components/pc_usercenter";
 import MediaQuery from "react-responsive";
+import AV from "leancloud-storage";
 
+var APP_ID = 'np4bnmpMeOqxHKBJNIAnaAJe-gzGzoHsz';
+var APP_KEY = 'hjI7ciphwzg0hP3LDdEunu9W';
+AV.init({
+  appId: APP_ID,
+  appKey: APP_KEY
+});
 export default class Root extends React.Component{
   render(){
     return (

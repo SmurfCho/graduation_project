@@ -76,14 +76,14 @@ export default class PCEditorVideoarea extends React.Component {
             width: rewidth,
             height: reheight,
           }}
-          onMouseUp={this.resizeBlur.bind(this)}
+          onChange={this.resizeBlur.bind(this)}
         >
           <div className="handle" style={{position:"absolute",userSelect:"none",width:10,height:"100%",borderRadius:10,border:"none",display:"inline-block",top:0,left:-5,cursor:"move"}}></div>
           <video id = {this.props.count} controls="controls" onClick={this.allFocus.bind(this)}
           style={videoStyle} title="点击编辑视频">
-          <source src="/src/images/test.mp4"  type="video/mp4"/>
-          <source src="/src/images/test.mp4"  type="video/ogg"/>
-          <source src="/src/images/test.mp4"  type="video/webm"/>
+          <source src={this.props.video}  type="video/mp4"/>
+          <source src={this.props.video}  type="video/ogg"/>
+          <source src={this.props.video}  type="video/webm"/>
           </video>
       </Resizable>
       </div>

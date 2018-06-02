@@ -29,9 +29,6 @@ export default class PCEditorTextarea extends React.Component {
     this.setState({disableDragging:false,cursor:"text"});
     this.props.getTextContent(e);
   }
-  dragBlur(e){
-    this.props.getTextareaPosition(e);
-  }
   resizeBlur(e){
     this.props.getTextareaSize(e);
     this.props.getTextareaPosition(e);
@@ -99,7 +96,7 @@ export default class PCEditorTextarea extends React.Component {
           }}
           onMouseUp={this.resizeBlur.bind(this)}
         >
-        <div className="handle" onMouseUp={this.dragBlur.bind(this)} style={{position:"absolute",userSelect:"none",width:10,height:"100%",borderRadius:10,border:"none",display:"inline-block",top:0,left:-5,cursor:"move"}}></div>
+        <div className="handle" style={{position:"absolute",userSelect:"none",width:10,height:"100%",borderRadius:10,border:"none",display:"inline-block",top:0,left:-5,cursor:"move"}}></div>
 
 
         <div contentEditable = {this.props.contentEditable}  autoFocus="autofocus" id = {this.props.count}

@@ -77,7 +77,7 @@ export default class PCEditorImagearea extends React.Component {
           onMouseUp={this.resizeBlur.bind(this)}
         >
         <div className="handle" style={{position:"absolute",userSelect:"none",width:10,height:"100%",borderRadius:10,border:"none",display:"inline-block",top:0,left:-5,cursor:"move"}}></div>
-        <img  autoFocus="autofocus" src="/src/images/timg.jpg" id = {this.props.count} onClick={this.allFocus.bind(this)}
+        <img  autoFocus="autofocus" src={this.props.image} id = {this.props.count} onClick={this.allFocus.bind(this)}
         style={imageStyle} title="点击编辑图片"/>
       </Resizable>
       </div>

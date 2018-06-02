@@ -20,17 +20,23 @@ import PCEditorTextarea from "./pc_editor_textarea";
 import PCEditorImagearea from "./pc_editor_imagearea";
 import PCEditorVideoarea from "./pc_editor_videoarea";
 import PCPlayer from "./pc_player";
+import AV from "leancloud-storage";
+// 存储服务
+var { Query, User} = AV;
+
+
+
 export default class PCEditor extends React.Component{
   constructor(){
 		super();
 		this.state = {
-      originSider: "visible",/*选择添加类型菜单条*/
+      originSider: "block",/*选择添加类型菜单条*/
       originSiderop:1,
-      textSider: "hidden",/*文本编辑工具条*/
+      textSider: "none",/*文本编辑工具条*/
       textSiderop:0,
-      imagesSider: "hidden",/*图片编辑工具条*/
+      imagesSider: "none",/*图片编辑工具条*/
       imagesSiderop:0,
-      videoSider: "hidden",/*视频编辑工具条*/
+      videoSider: "none",/*视频编辑工具条*/
       videoSiderop:0,
       count:0,/*文本框数*/
       textlist:[[[]]],/*文本框队列,保存文字内容*/
@@ -61,7 +67,7 @@ export default class PCEditor extends React.Component{
       curslidesName:"",
     };
 	};
-
+  componentDidMount(){}
   componentWillMount(){
     let {seclist,textlist,imagelist,videolist,textarea,imagearea,videoarea,transform,sectransform,curslidesName,curSecRow,curSecCol}=this.state;
 
@@ -77,56 +83,55 @@ export default class PCEditor extends React.Component{
     }
     this.setState({slideslist:slideslist,userid:userid,slidesIndex:this.props.match.params.curslidesIndex});
   }
-
   /*展示工具条o*/
   showOriginSider(e){
     e.stopPropagation();
     e.preventDefault();
     this.setState({
-      originSider:"visible",
+      originSider:"block",
       originSiderop:1,
-      textSider: "hidden",/*文本编辑工具条*/
+      textSider: "none",/*文本编辑工具条*/
       textSiderop:0,
-      imagesSider: "hidden",/*图片编辑工具条*/
+      imagesSider: "none",/*图片编辑工具条*/
       imagesSiderop:0,
-      videoSider: "hidden",/*视频编辑工具条*/
+      videoSider: "none",/*视频编辑工具条*/
       videoSiderop:0,
     });
   }
 
   showTextSider(e){
     this.setState({
-      textSider:"visible",
+      textSider:"block",
       textSiderop:1,
-      originSider: "hidden",
+      originSider: "none",
       originSiderop:0,
-      imagesSider: "hidden",
+      imagesSider: "none",
       imagesSiderop:0,
-      videoSider: "hidden",
+      videoSider: "none",
       videoSiderop:0,
     });
   }
   showImageSider(e){
     this.setState({
-      imagesSider:"visible",
+      imagesSider:"block",
       imagesSiderop:1,
-      originSider: "hidden",
+      originSider: "none",
       originSiderop:0,
-      textSider: "hidden",
+      textSider: "none",
       textSiderop:0,
-      videoSider: "hidden",
+      videoSider: "none",
       videoSiderop:0,
     });
   }
   showVideoSider(e){
     this.setState({
-      videoSider:"visible",
+      videoSider:"block",
       videoSiderop:1,
-      originSider: "hidden",
+      originSider: "none",
       originSiderop:0,
-      textSider: "hidden",
+      textSider: "none",
       textSiderop:0,
-      imagesSider: "hidden",
+      imagesSider: "none",
       imagesSiderop:0,
     });
   }
@@ -150,22 +155,30 @@ export default class PCEditor extends React.Component{
  /*新增图片*/
  addImage(e){
    let {curSecCol,curSecRow}=this.state;
-    let imagelist = this.state.imagelist;
     let count = this.state.imageCount;
     let imagearea = this.state.imagearea;
     let style = [0,10,0,0,"solid","#000","translate(0,0)",200,200];/*rotation,opacity,borderWidth,borderRadius,borderStyle,borderColor*/
     imagearea[curSecCol][curSecRow].push(style);
-    imagelist[curSecCol][curSecRow].push(count);
-    this.setState({imagelist:imagelist,imageCount:count+1,imagearea:imagearea});
+    this.setState({imageCount:count+1,imagearea:imagearea});
     }
     /*image upload*/
-    uploadImage({ file, fileList }){
-      let imageObjectList = this.state.imageObjectList;/*
-      let url = file.url;
-      imageObjectList.push(url);*//*
-      this.setState(imageObjectList:imageObjectList);
-      if (file.status !== "uploading") {
-    }*/
+    uploadImage(e){
+      e.preventDefault();
+      let {curSecCol,curSecRow}=this.state;
+      let imagelist = this.state.imagelist;
+      var fileUploadControl = e.target;
+      if (fileUploadControl.files.length > 0) {
+       var localFile = fileUploadControl.files[0];
+       var name = localFile.name;
+       var file = new AV.File(name, localFile);
+       file.save().then(function(file) {
+         imagelist[curSecCol][curSecRow].push(file.url());
+         return 1;
+       }).then((x)=>{x=1?this.setState({imagelist:imagelist}):''})
+       .catch(function(error) {
+         console.error(error);
+       });
+     }
   }
 
   showimage(e){
@@ -175,19 +188,29 @@ export default class PCEditor extends React.Component{
  /*新增视频*/
  addVideo(e){
     let {curSecCol,curSecRow}=this.state;
-    let videolist = this.state.videolist;
     let count = this.state.videoCount;
     let videoarea = this.state.videoarea;
     let style = [0,10,0,0,"solid","#000","translate(0,0)",200,200];/*rotation,opacity,borderWidth,borderRadius,borderStyle,borderColor*/
     videoarea[curSecCol][curSecRow].push(style);
-    videolist[curSecCol][curSecRow].push(count);
-    this.setState({videolist:videolist,videoCount:count+1,videoarea:videoarea});
+    this.setState({videoCount:count+1,videoarea:videoarea});
     }
-  uploadVideo({ file, fileList }){
-    let videoObjectList = this.state.videoObjectList;
-    let url = file.url;/*
-    videoObjectList.push(url);
-    this.setState(videoObjectList:videoObjectList)*/
+  uploadVideo(e){
+    e.preventDefault();
+    let {curSecCol,curSecRow}=this.state;
+    let videolist = this.state.videolist;
+    var fileUploadControl = e.target;
+    if (fileUploadControl.files.length > 0) {
+     var localFile = fileUploadControl.files[0];
+     var name = localFile.name;
+     var file = new AV.File(name, localFile);
+     file.save().then(function(file) {
+       videolist[curSecCol][curSecRow].push(file.url());
+       return 1;
+     }).then((x)=>{x=1?this.setState({videolist:videolist}):''})
+     .catch(function(error) {
+       console.error(error);
+     });
+   }
   }
  showvideo(e){
    this.showVideoSider(e);
@@ -554,7 +577,18 @@ export default class PCEditor extends React.Component{
       /*以下是用于测试的内容*/
       let localInfo = localStorage.getItem(userid);
       let jsonlocalInfo = JSON.parse(localInfo);
-    }
+
+      var Slides = AV.Object.extend('Slides');
+      var slides = new Slides();
+
+      slides.set('userid', localStorage.userid);
+      slides.set('slides', slideslistStr);
+      slides.save().then(function (slides) {
+        // 成功保存之后，执行其他逻辑.
+      }, function (error) {
+        // 异常处理
+      });
+        }
     showviwer(){
       this.setState({viewerDispaly:"block",contentEditable:"false"});
     }
@@ -701,20 +735,12 @@ export default class PCEditor extends React.Component{
       this.setState({nextslidesIndex:nextslidesIndex});
     }
 render(){
-   let {imagearea,imageareaKey,imagelist,imageObjectList,videoObjectList} = this.state;
+   let {imagearea,imageareaKey,imagelist} = this.state;
    let {videoarea,videoareaKey,videolist} = this.state;
    let {textarea,textareaKey,textlist}=this.state;
    let {curSecCol,curSecRow}=this.state;
    let {sectransform,seclist,slidesIndex} = this.state;
-   const props = {
-     action: "",
-     headers: {
-       "Access-Control-Allow-Origin":"*"
-     },
-     listType: "picture",
-     onChange: (file,fileList)=>{
-     }
-    };
+
    let showSeclist = seclist ?
     seclist.map((secCol,colindex)=>{
       let secCollist=[] ;
@@ -736,12 +762,13 @@ render(){
        let showImagelist = imagelist[colindex][rowindex] ?
        imagelist[colindex][rowindex].map((image,index)=>(
          <PCEditorImagearea key={index} imagekey={index}
+         image = {image}
          getImageContent = {this.getImageContent.bind(this)}
          getImagePosition={this.getImagePosition.bind(this)}
          getImageSize={this.getImageSize.bind(this)}
          getImageareaKey = {this.getImageareaKey.bind(this)}
-         imagearea={imagearea[colindex][rowindex][index]} count = {index}
-         imageObjectList={imageObjectList}
+         imagearea={imagearea[colindex][rowindex][index]}
+         count = {index}
          showImageSider={this.showImageSider.bind(this)}/>
         ))
           :
@@ -750,12 +777,12 @@ render(){
       videolist[colindex][rowindex].map((video,index)=>{
         return(
         <PCEditorVideoarea key={index} videokey={index}
+        video = {video}
         getVideoContent = {this.getVideoContent.bind(this)}
         getVideoPosition={this.getVideoPosition.bind(this)}
         getVideoSize={this.getVideoSize.bind(this)}
         getVideoareaKey = {this.getVideoareaKey.bind(this)}
         videoarea={videoarea[colindex][rowindex][index]} count = {index}
-        videoObjectList={videoObjectList}
         showVideoSider={this.showVideoSider.bind(this)}/>
        )})
          :
@@ -820,7 +847,7 @@ let showSlideslist = seclist ?
         borderRadius:imagearea[colindex][rowindex][index][3],
         transform:imagearea[colindex][rowindex][index][6]+" rotate("+imagearea[colindex][rowindex][index][0]+"deg)",
       }}
-       autoFocus="autofocus" src="/src/images/timg.jpg"/>
+       autoFocus="autofocus" src={image}/>
      ))
        :
        "";
@@ -843,9 +870,9 @@ let showSlideslist = seclist ?
        borderRadius:videoarea[colindex][rowindex][index][3],
        transform:videoarea[colindex][rowindex][index][6]+" rotate("+videoarea[colindex][rowindex][index][0]+"deg)",
      }}>
-       <source src="/src/images/test.mp4"  type="video/mp4"/>
-       <source src="/src/images/test.mp4"  type="video/ogg"/>
-       <source src="/src/images/test.mp4"  type="video/webm"/>
+       <source src={video}  type="video/mp4"/>
+       <source src={video}  type="video/ogg"/>
+       <source src={video}  type="video/webm"/>
        </video>
     )})
       :
@@ -895,28 +922,21 @@ return secCollist;
                       <Icon class="tool-icon" type="save" />
                     </Button>
               </Sider>
-              <Sider class="sider" id="func-menu" width="210" style={{ visibility:this.state.originSider,opacity:this.state.originSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80,transition: "opacity 0.5s linear"}}>
+              <Sider class="sider" id="func-menu" width="210" style={{ display:this.state.originSider,opacity:this.state.originSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80,transition: "opacity 0.5s linear"}}>
                 <Button htmlType="button" id="text" title="添加文本"  onClick={this.showtext.bind(this)}>
                   <Icon class="tool-icon" type="file-text" />
                 </Button>
-                <Upload {...props}>
-                <Button htmlType="button" id="images" title="添加图片"  onClick={this.showimage.bind(this)}>
-                    <Icon class="tool-icon" type="picture" />
-                </Button>
-                </Upload>
-                <Upload
-                accept="vedio"
-                action= ""
-                onChange={this.uploadVideo.bind(this)}>
-                <Button htmlType="button" id="video" title="添加视频" onClick={this.showvideo.bind(this)}>
-                    <Icon class="tool-icon" type="video-camera" />
-                </Button>
-                </Upload>
+
+                <form>
+                  <input id="image" type="file" accept="image/png,image/jpeg,image/gif,image/jpg"
+                  onClick={this.showimage.bind(this)} onChange={this.uploadImage.bind(this)}/>
+                  <input id="video" type="file" accept="video/mp4,video/ogg,video/webm" onClick={this.showvideo.bind(this)} onChange={this.uploadVideo.bind(this)}/>
+                </form>
                 <Button htmlType="button" id="deleteSlide" title="删除当前幻灯片"  onClick={this.deleteSlides.bind(this)}>
                   <Icon class="tool-icon" type="delete" />
                 </Button>
               </Sider>
-              <Sider class="sider" id="text-menu" width="210" style={{visibility:this.state.textSider,opacity:this.state.textSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80,transition:"opacity 0.5s linear", }}>
+              <Sider class="sider" id="text-menu" width="210" style={{display:this.state.textSider,opacity:this.state.textSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80,transition:"opacity 0.5s linear", }}>
                   <PCEditorTextsidebar
                   showOriginSider={this.showOriginSider.bind(this)}
                   getTextAlignKey={this.getTextAlignKey.bind(this)}
@@ -933,7 +953,7 @@ return secCollist;
                   deleteText={this.deleteText.bind(this)}
                   />
               </Sider>
-              <Sider class="sider" id="image-menu" width="200" style={{visibility:this.state.imagesSider,opacity:this.state.imagesSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80 ,transition: "opacity 0.5s linear",}}>
+              <Sider class="sider" id="image-menu" width="200" style={{display:this.state.imagesSider,opacity:this.state.imagesSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80 ,transition: "opacity 0.5s linear",}}>
                 <PCEditorImagesidebar
                 showOriginSider={this.showOriginSider.bind(this)}
                 irotationChange={this.irotationChange.bind(this)}
@@ -944,7 +964,7 @@ return secCollist;
                 imageObjectList={this.state.imageObjectList}
                 />
               </Sider>
-              <Sider class="sider" id="video-menu" width="200" style={{visibility:this.state.videoSider,opacity:this.state.videoSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80,transition:"opacity 0.5s linear", }}>
+              <Sider class="sider" id="video-menu" width="200" style={{display:this.state.videoSider,opacity:this.state.videoSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80,transition:"opacity 0.5s linear", }}>
                 <PCEditorVideosidebar
                 showOriginSider={this.showOriginSider.bind(this)}
                 vrotationChange={this.vrotationChange.bind(this)}
