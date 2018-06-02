@@ -51,7 +51,7 @@ export default class PCEditor extends React.Component{
       secNum:0,
       curSecRow:0,
       curSecCol:0,
-      sectransform:[[["translate(0,0)","block"]]],
+      sectransform:[[["translate(0,0)","block","100%","100%"]]],
       viewerDispaly: "none",
       contentEditable:"true",
       secId:0,
@@ -63,10 +63,12 @@ export default class PCEditor extends React.Component{
 
   componentDidMount(){
     let userid = localStorage.userid;
+    let slidesIndex = this.props.match.params.curslidesIndex;
     let slideslistStr = localStorage.getItem(userid);
     let slideslist = slideslistStr?JSON.parse(slideslistStr):[];
+    let curslidesName = slideslist.length?slideslist[slidesIndex].slidesName:'';
     console.log("slideslist",slideslist);
-    this.setState({slideslist:slideslist,userid:userid,slidesIndex:this.props.match.params.curslidesIndex});
+    this.setState({slideslist:slideslist,userid:userid,slidesIndex:this.props.match.params.curslidesIndex,curslidesName:curslidesName});
   }
 
   /*展示工具条o*/
@@ -495,13 +497,13 @@ export default class PCEditor extends React.Component{
     storageSlides(){
       let {secId,slideslist,slidesIndex,sectransform,seclist,curSecRow,curSecCol} = this.state;
       let userid = localStorage.userid;
-      if(curSecCol != 0 && curSecRow != 0 && seclist[curSecCol][curSecRow-1]=="y"){
+      /*if(curSecCol != 0 && curSecRow != 0 && seclist[curSecCol][curSecRow-1]=="y"){
         sectransform[curSecCol][curSecRow]=["translate(0,-1000px)","100%",0];
         sectransform[0][0]=["translate(0,0)","100%","100%"];
       }else if(curSecCol != 0 && curSecRow != 0 && seclist[curSecCol-1][curSecRow]=="y"){
         sectransform[curSecCol][curSecRow]=["translate(-2000px,0)",0,"100%"];
         sectransform[0][0]=["translate(0,0)","100%","100%"];
-      }
+      }*/
       if(slideslist.length >   slidesIndex){
         let slidesJSON = {
           "seclist":this.state.seclist,
@@ -609,7 +611,7 @@ export default class PCEditor extends React.Component{
     deleteSlides(e){
       let{seclist,secNum,currentSecindex,sectransform,secHead,curSecCol,curSecRow,textlist,imagelist,videolist,textarea,imagearea,videoarea} = this.state;
 
-      if(seclist.length==0 && [curSecCol-1]<0 && [curSecRow-1]<0){/*当前只有一张幻灯片，删除后则为空白*/
+      if(seclist.length==1 && [curSecCol-1]<0 && [curSecRow-1]<0){/*当前只有一张幻灯片，删除后则为空白*/
         seclist[curSecCol].splice([curSecRow],1,"y");
         sectransform[curSecCol].splice([curSecRow],["translate(0,0)","100%","100%","block"]);
         textlist[curSecCol].splice([curSecRow],1,[]);
@@ -627,7 +629,14 @@ export default class PCEditor extends React.Component{
         textarea.splice([curSecCol],1);
         imagearea.splice([curSecCol],1);
         videoarea.splice([curSecCol],1);
-      }else{
+        if(seclist[curSecCol+1][curSecRow] == "y"){
+          sectransform[curSecCol+1][curSecRow][0]="translate(0,0)";
+          curSecCol=curSecCol+1;
+        }else if(seclist[curSecCol-1][curSecRow] == "y"){
+          sectransform[curSecCol-1][curSecRow][0]="translate(0,0)";
+          curSecCol=curSecCol-1;
+        }
+      }else if(seclist[curSecCol].length>1){//当前列不止一张幻灯片
         seclist[curSecCol].splice([curSecRow],1);
         sectransform[curSecCol].splice([curSecRow],1);
         textlist[curSecCol].splice([curSecRow],1);
@@ -636,19 +645,13 @@ export default class PCEditor extends React.Component{
         textarea[curSecCol].splice([curSecRow],1);
         imagearea[curSecCol].splice([curSecRow],1);
         videoarea[curSecCol].splice([curSecRow],1);
-      }
-      if(seclist[curSecCol][curSecRow+1] == "y"){
-        sectransform[curSecCol][curSecRow+1][0]="translate(0,0)";
-        curSecRow=curSecRow=1;
-      }else if(seclist[curSecCol][curSecRow-1] == "y"){
-        sectransform[curSecCol][curSecRow-1][0]="translate(0,0)";
-        curSecRow=curSecRow-1;
-      }else if(seclist[curSecCol+1][curSecRow] == "y"){/*列数大于1,且总列数大于当前页码，则向后一列移动*/
-        sectransform[curSecCol+1][curSecRow][0]="translate(0,0)";
-        curSecCol=curSecCol+1;
-      }else if(seclist[curSecCol-1][curSecRow] == "y"){
-        sectransform[curSecCol-1][curSecRow][0]="translate(0,0)";
-        curSecCol=curSecCol-1;
+        if(seclist[curSecCol][curSecRow+1] == "y"){
+          sectransform[curSecCol][curSecRow+1][0]="translate(0,0)";
+          curSecRow=curSecRow=1;
+        }else if(seclist[curSecCol][curSecRow-1] == "y"){
+          sectransform[curSecCol][curSecRow-1][0]="translate(0,0)";
+          curSecRow=curSecRow-1;
+        }
       }
       console.log("seclist:",seclist,"curSecRow",curSecRow,"curSecCol",curSecCol,"textlist",textlist);
       this.setState({seclist:seclist,secNum:secNum+1,sectransform:sectransform,curSecRow:curSecRow,curSecCol:curSecCol,
