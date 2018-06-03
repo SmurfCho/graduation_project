@@ -71,10 +71,10 @@ export default class PCHomepageContainer extends React.Component{
         <div class="Container">
           <div class="carousel">
             <Carousel {...settings}>
-            <div><img class="carousel" src="./src/images/carbac1.jpg" alt="carousel_1"/></div>
-            <div><img class="carousel" src="./src/images/carbac2.jpg" alt="carousel_2"/></div>
-            <div><img class="carousel" src="./src/images/carbac3.jpg" alt="carousel_3"/></div>
-            <div><img class="carousel" src="./src/images/carbac4.jpg" alt="carousel_4"/></div>
+            <div><img class="carousel" src="./src/images/ca2.png" alt="carousel_1"/></div>
+            <div><img class="carousel" src="./src/images/ca1.png" alt="carousel_2"/></div>
+            <div><img class="carousel" src="./src/images/ca4.png" alt="carousel_3"/></div>
+            <div><img class="carousel" src="./src/images/ca3.png" alt="carousel_4"/></div>
             </Carousel>
           </div>
         </div>
