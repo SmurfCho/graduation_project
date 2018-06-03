@@ -14,13 +14,15 @@ import {
   CheckBox,
   Card,
   notification,
-  Upload
+  Upload,
 } from "antd";
 const FormItem = Form.Item;
 const TabPane = Tabs.TabPane;
-import { BrowserRouter as Router,Switch,Route } from "react-router-dom";
 import PCHeader from "./pc_header";
 import PCFooter from "./pc_footer";
+import AV from "leancloud-storage";
+var { Query, User} = AV;
+
 
 export default class PCUserCenter extends React.Component{
   constructor(){
@@ -32,6 +34,7 @@ export default class PCUserCenter extends React.Component{
       previewVisible: false,
       slideslist:"",
       userid:"",
+      context:[],
     };
   };
   handleCancel(e){
@@ -54,12 +57,51 @@ export default class PCUserCenter extends React.Component{
       this.setState({});
     });*/
 
-    let userid = localStorage.userid;
+    /*let userid = localStorage.userid;
     let slideslistStr = localStorage.getItem(userid);
     let slideslist = JSON.parse(slideslistStr);
+    slideslist = slideslist ? slideslist : [];
     console.log("slideslist",slideslist);
-    this.setState({slideslist:slideslist,userid:userid});
-  };
+    this.setState({slideslist:slideslist,userid:userid});*/
+    let context = [];
+    var querySlide = new AV.Query('Slides');
+    querySlide.equalTo('owner', AV.User.current());
+    querySlide.find().then(function (slides) {
+      slides.forEach(function(slide) {
+        var slideTitle = slide.get('title');
+        var slideContent = slide.get('content');
+        var slideId = slide.get('objectId');
+        // handlebars context
+        context.push([
+          slideTitle,
+          slideContent,
+          slideId
+        ]);
+      })
+      return context;
+    }).then((context)=>{this.setState({context:context});})
+  }
+  deleteSlides(e){
+    e.preventDefault();
+    let {context}=this.state;
+    /*let {slideslist,userid} = this.state;
+    let index = parseInt(e.target.id);
+    slideslist.splice(index,1);
+    let slideslistStr = JSON.stringify(slideslist);
+    localStorage.setItem(userid,slideslistStr);
+    this.setState({slideslist:slideslist});*/
+    let index = e.target.id;
+    let index2 = e.target.parentNode.id;
+    var slides = AV.Object.createWithoutData('Slides', index);
+    slides.destroy().then(function (success) {
+      context.splice(index2,1);
+      return context;
+  }).then((context)=>{this.setState({context:context})})
+  .catch(function (error) {
+    // 删除失败
+  });
+  }
+
   render(){
     const props = {
       action: "",
@@ -76,14 +118,28 @@ export default class PCUserCenter extends React.Component{
     };
     const {userwork,usercollection} = this.state;
     const {slideslist,userid} = this.state;
-    const showslideslist = userwork.length ? userwork : slideslist;
-    console.log("showslideslist:",showslideslist);
-    const userworkList = showslideslist.length ?
-    showslideslist.map((slides,index)=>(
-      <Card key={index}>
-        <Link to={`/player/${index}`}  target="_blank">
-          <p><span>{index+1}</span>&nbsp;&nbsp;&nbsp;<span>{slides.slidesName}</span></p>
-        </Link>
+    const {context} =this.state;
+    const showslideslist = userwork? userwork : slideslist;
+    const userworkList = context.length ?
+    context.map((slides,index)=>(
+
+      <Card key={index} >
+        <Row>
+        <Col span={18}>
+          <Link to={`/player/${slides[2]}`}  target="_blank">
+            <span>{index+1}&nbsp;&nbsp;&nbsp;{slides[0]}</span>
+          </Link>
+        </Col>
+        <Col span={6} id={index}>
+          <Link to={`/player/${slides[2]}`}  target="_blank">
+            <Button style={{marginRight:10}}>播放</Button>
+          </Link>
+          <Link to={`/editor/${slides[2]}`}  target="_self">
+            <Button style={{marginRight:10}}>编辑</Button>
+          </Link>
+          <Button id={slides[2]} style={{marginRight:60}} onClick={this.deleteSlides.bind(this)}>删除</Button>
+        </Col>
+        </Row>
       </Card>
     ))
     :

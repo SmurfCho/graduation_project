@@ -19,12 +19,14 @@
     "babelify": "^8.0.0",
     "css-loader": "^0.28.7",
     "fetch": "^1.1.0",
+    "leancloud-realtime": "^4.0.1",
+    "leancloud-storage": "^3.7.0",
     "less": "^2.7.3",
     "less-loader": "^4.0.5",
     "prop-types": "^15.6.0",
     "re-resizable": "^4.4.8",
     "react": "^16.1.1",
-    "react-color": "^2.14.0",
+    "react-color": "^2.14.1",
     "react-dom": "^16.1.1",
     "react-draggable": "^3.0.5",
     "react-mixin": "^4.0.0",
@@ -36,5 +38,8 @@
     "style-loader": "^0.19.0",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.4"
+  },
+  "devDependencies": {
+    "webpack-cli": "^2.1.4"
   }
 }

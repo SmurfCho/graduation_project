@@ -7,6 +7,9 @@ import {
   Layout,
   Upload,
 } from "antd";
+import AV from "leancloud-storage";
+// 存储服务
+var { Query, User} = AV;
 
 export default class PCPlayer extends React.Component{
   constructor(){
@@ -27,29 +30,9 @@ export default class PCPlayer extends React.Component{
       slidesIndex:0,
     }
   }
-  componentWillMount(){
-		console.log(localStorage);
-		if(localStorage.style!=""&&localStorage.style != "undefined"){
-			this.setState({hasLogined:true});
-			this.setState({userNickName:localStorage.userNickName,userId:localStorage.userid})
-		}
-	}
-  componentWillMount(){
-    /*var myFetchOptions = {
-      method: "GET"
-    };
-    fetch( ,myFetchOptions)
-    .then(response=>response.json())
-    .then(json=>{
-      this.setState({});
-    });
-    fetch( ,myFetchOptions)
-    .then(response=>response.json())
-    .then(json=>{
-      this.setState({});
-    });*/
 
-    let userid = localStorage.userid;
+  componentWillMount(){
+    /*let userid = localStorage.userid;
     let slideslistStr = localStorage.getItem(userid);
     let slidesIndex = this.props.match.params.slidesIndex;
     let slideslist = JSON.parse(slideslistStr);
@@ -57,7 +40,24 @@ export default class PCPlayer extends React.Component{
     let slides = slideslist[slidesIndex];
     this.setState({slideslist:slideslist,userid:userid,slidesIndex:this.props.match.params.slidesIndex,seclist:slides.seclist,
     textlist:slides.textlist,imagelist:slides.imagelist,videolist:slides.videolist,
-    textarea:slides.textarea,imagearea:slides.imagearea,videoarea:slides.videoarea,transform:slides.transform,sectransform:slides.sectransform,slidesName:slides.curslidesName});
+    textarea:slides.textarea,imagearea:slides.imagearea,videoarea:slides.videoarea,transform:slides.transform,sectransform:slides.sectransform,slidesName:slides.curslidesName});*/
+    let slidesIndex = this.props.match.params.slidesIndex;
+    if(slidesIndex!="undefined"){
+    var querySlide = new AV.Query('Slides');
+    querySlide.equalTo('objectId', slidesIndex);
+    querySlide.find().then(function (slides) {
+      return slides;
+  }).then((slides)=>{
+    let slidesContent = slides[0].attributes.content?JSON.parse(slides[0].attributes.content):[];
+    if(slidesContent!=[]){
+      this.setState({seclist:slidesContent.seclist,
+      textlist:slidesContent.textlist,imagelist:slidesContent.imagelist,videolist:slidesContent.videolist,
+      textarea:slidesContent.textarea,imagearea:slidesContent.imagearea,videoarea:slidesContent.videoarea,
+      transform:slidesContent.transform,sectransform:slidesContent.sectransform,slidesName:slidesContent.curslidesName});
+    }
+  })
+    .catch(function (error) {
+    });}
   };
   navigatorDre(e){
     let {seclist,sectransform,curSecCol,curSecRow} = this.state;
@@ -106,9 +106,8 @@ export default class PCPlayer extends React.Component{
     }
   };
   render(){
-    let {slideslist,slidesIndex,seclist,textlist,imagelist,videolist,textarea,imagearea,videoarea,transform,
+    let {slidesIndex,seclist,textlist,imagelist,videolist,textarea,imagearea,videoarea,transform,
     curSecRow,curSecCol,sectransform,slidesName} = this.state;
-    let slide = slideslist[slidesIndex];
     let showSlideslist = seclist ?
      seclist.map((secCol,colindex)=>{
        let secCollist=[] ;
@@ -155,7 +154,7 @@ export default class PCPlayer extends React.Component{
             borderRadius:imagearea[colindex][rowindex][index][3],
             transform:imagearea[colindex][rowindex][index][6]+" rotate("+imagearea[colindex][rowindex][index][0]+"deg)",
           }}
-           autoFocus="autofocus" src="./src/images/timg.jpg"/>
+           autoFocus="autofocus" src="/src/images/timg.jpg"/>
          ))
            :
            "";
@@ -178,9 +177,9 @@ export default class PCPlayer extends React.Component{
            borderRadius:videoarea[colindex][rowindex][index][3],
            transform:videoarea[colindex][rowindex][index][6]+" rotate("+videoarea[colindex][rowindex][index][0]+"deg)",
          }}>
-           <source src="./src/images/test.mp4"  type="video/mp4"/>
-           <source src="./src/images/test.mp4"  type="video/ogg"/>
-           <source src="./src/images/test.mp4"  type="video/webm"/>
+           <source src="/src/images/test.mp4"  type="video/mp4"/>
+           <source src="/src/images/test.mp4"  type="video/ogg"/>
+           <source src="/src/images/test.mp4"  type="video/webm"/>
            </video>
         )})
           :

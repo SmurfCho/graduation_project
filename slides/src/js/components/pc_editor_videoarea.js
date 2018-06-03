@@ -50,12 +50,16 @@ export default class PCEditorVideoarea extends React.Component {
     }
     let videoObjectList = this.props.videoObjectList;
     let key = this.props.videokey;/*当前视频索引*/
+    let reheight=this.props.videoarea[7],rewidth=this.props.videoarea[8],drtransform=this.props.videoarea[6];
+    let drtransforms = drtransform.slice(10);
+    let transformarr = drtransforms.split(",");
+    let transX = parseInt(transformarr[0]),transY = parseInt(transformarr[1]);
 
     return (
       <Draggable
       axis="both"
       handle=".handle"
-      defaultPosition={{x: 0, y: 0}}
+      defaultPosition={{x: transX, y: transY}}
       position={null}
       grid={[25, 25]}
       onStart={this.handleStart}
@@ -69,17 +73,17 @@ export default class PCEditorVideoarea extends React.Component {
           transformOrigin:"50%"}}
           enable={{ top:false, right:true, bottom:true, left:false, topRight:false, bottomRight:true, bottomLeft:false, topLeft:false }}
           defaultSize={{
-            width: 200,
-            height: 200,
+            width: rewidth,
+            height: reheight,
           }}
           onMouseUp={this.resizeBlur.bind(this)}
         >
           <div className="handle" style={{position:"absolute",userSelect:"none",width:10,height:"100%",borderRadius:10,border:"none",display:"inline-block",top:0,left:-5,cursor:"move"}}></div>
           <video id = {this.props.count} controls="controls" onClick={this.allFocus.bind(this)}
           style={videoStyle} title="点击编辑视频">
-          <source src="./src/images/test.mp4"  type="video/mp4"/>
-          <source src="./src/images/test.mp4"  type="video/ogg"/>
-          <source src="./src/images/test.mp4"  type="video/webm"/>
+          <source src={this.props.video}  type="video/mp4"/>
+          <source src={this.props.video}  type="video/ogg"/>
+          <source src={this.props.video}  type="video/webm"/>
           </video>
       </Resizable>
       </div>

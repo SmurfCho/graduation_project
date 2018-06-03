@@ -1,5 +1,6 @@
 import React from "react";
-import {Link} from "react-router-dom";
+import ReactDOM from "react-dom";
+import { BrowserRouter as Router,Route,Switch,Link} from "react-router-dom";
 import {
   Row,
   Col,
@@ -20,17 +21,21 @@ import PCEditorTextarea from "./pc_editor_textarea";
 import PCEditorImagearea from "./pc_editor_imagearea";
 import PCEditorVideoarea from "./pc_editor_videoarea";
 import PCPlayer from "./pc_player";
+import AV from "leancloud-storage";
+// 存储服务
+var { Query, User} = AV;
+var Slides = AV.Object.extend('Slides');
 export default class PCEditor extends React.Component{
   constructor(){
 		super();
 		this.state = {
-      originSider: "visible",/*选择添加类型菜单条*/
+      originSider: "block",/*选择添加类型菜单条*/
       originSiderop:1,
-      textSider: "hidden",/*文本编辑工具条*/
+      textSider: "none",/*文本编辑工具条*/
       textSiderop:0,
-      imagesSider: "hidden",/*图片编辑工具条*/
+      imagesSider: "none",/*图片编辑工具条*/
       imagesSiderop:0,
-      videoSider: "hidden",/*视频编辑工具条*/
+      videoSider: "none",/*视频编辑工具条*/
       videoSiderop:0,
       count:0,/*文本框数*/
       textlist:[[[]]],/*文本框队列,保存文字内容*/
@@ -51,75 +56,100 @@ export default class PCEditor extends React.Component{
       secNum:0,
       curSecRow:0,
       curSecCol:0,
-      sectransform:[[["translate(0,0)","block","100%","100%"]]],
+      sectransform:[[["translate(0,0)","block"]]],
       viewerDispaly: "none",
       contentEditable:"true",
       secId:0,
       slideslist:[],
       slidesIndex:0,
+      nextslidesIndex:'undefined',
       curslidesName:"",
+      storage:false,
+      slidesId:'undefined',
     };
 	};
-
-  componentDidMount(){
-    let userid = localStorage.userid;
+  componentWillMount(){
+    let {slidesId,seclist,textlist,imagelist,videolist,textarea,imagearea,videoarea,transform,sectransform,curslidesName,curSecRow,curSecCol}=this.state;
+    /*let userid = localStorage.userid;
     let slidesIndex = this.props.match.params.curslidesIndex;
     let slideslistStr = localStorage.getItem(userid);
     let slideslist = slideslistStr?JSON.parse(slideslistStr):[];
-    let curslidesName = slideslist.length?slideslist[slidesIndex].slidesName:'';
-    console.log("slideslist",slideslist);
-    this.setState({slideslist:slideslist,userid:userid,slidesIndex:this.props.match.params.curslidesIndex,curslidesName:curslidesName});
-  }
+    if(slideslist != [] && slideslist[slidesIndex] != null){
+      let slides = slideslist[slidesIndex];
+      this.setState({slideslist:slideslist,userid:userid,slidesIndex:this.props.match.params.slidesIndex,seclist:slides.seclist,
+      textlist:slides.textlist,imagelist:slides.imagelist,videolist:slides.videolist,
+      textarea:slides.textarea,imagearea:slides.imagearea,videoarea:slides.videoarea,transform:slides.transform,sectransform:slides.sectransform,slidesName:slides.curslidesName});
+    }
+    this.setState({slideslist:slideslist,userid:userid,slidesIndex:this.props.match.params.curslidesIndex});
+*/
+    let slidesIndex = this.props.match.params.curslidesIndex?this.props.match.params.curslidesIndex:'undefined';
 
+    if(slidesIndex!="undefined"){
+    var querySlide = new AV.Query('Slides');
+    querySlide.equalTo('objectId', slidesIndex);
+    querySlide.find().then(function (slides) {
+      return slides;
+  }).then((slides)=>{
+    let slidesContent = slides[0].attributes.content?JSON.parse(slides[0].attributes.content):[];
+    if(slidesContent!=[]){
+      this.setState({seclist:slidesContent.seclist,slidesId:slidesIndex,
+      textlist:slidesContent.textlist,imagelist:slidesContent.imagelist,videolist:slidesContent.videolist,
+      textarea:slidesContent.textarea,imagearea:slidesContent.imagearea,videoarea:slidesContent.videoarea,
+      transform:slidesContent.transform,sectransform:slidesContent.sectransform,slidesName:slidesContent.curslidesName});
+    }
+  })
+  .catch(function (error) {
+  });}
+  }
   /*展示工具条o*/
   showOriginSider(e){
     e.stopPropagation();
     e.preventDefault();
     this.setState({
-      originSider:"visible",
+      originSider:"block",
       originSiderop:1,
-      textSider: "hidden",/*文本编辑工具条*/
+      textSider: "none",/*文本编辑工具条*/
       textSiderop:0,
-      imagesSider: "hidden",/*图片编辑工具条*/
+      imagesSider: "none",/*图片编辑工具条*/
       imagesSiderop:0,
-      videoSider: "hidden",/*视频编辑工具条*/
+      videoSider: "none",/*视频编辑工具条*/
       videoSiderop:0,
     });
   }
 
   showTextSider(e){
     this.setState({
-      textSider:"visible",
+      textSider:"block",
       textSiderop:1,
-      originSider: "hidden",
+      originSider: "none",
       originSiderop:0,
-      imagesSider: "hidden",
+      imagesSider: "none",
       imagesSiderop:0,
-      videoSider: "hidden",
+      videoSider: "none",
       videoSiderop:0,
     });
   }
   showImageSider(e){
     this.setState({
-      imagesSider:"visible",
+      imagesSider:"block",
       imagesSiderop:1,
-      originSider: "hidden",
+      originSider: "none",
       originSiderop:0,
-      textSider: "hidden",
+      textSider: "none",
       textSiderop:0,
-      videoSider: "hidden",
+      videoSider: "none",
       videoSiderop:0,
     });
   }
   showVideoSider(e){
     this.setState({
-      videoSider:"visible",
+      videoSider:"block",
       videoSiderop:1,
-      originSider: "hidden",
+      originSider: "none",
       originSiderop:0,
-      textSider: "hidden",
+      textSider: "none",
       textSiderop:0,
-      imagesSider: "hidden",
+      imagesSider: "none",
       imagesSiderop:0,
     });
   }
@@ -129,9 +159,9 @@ export default class PCEditor extends React.Component{
   /*新建文本框o*/
   addTextarea(e){
      let {textlist,count,textarea,curSecCol,curSecRow} = this.state;
-     let style = ["left",16,1,2,"#000","#fff",0,1,0,"solid","#000",4,0,200,200];
+     let style = ["left",16,1,2,"#000","#fff",0,1,0,"solid","#000",4,"translate(0,0)",200,200];
      textarea[curSecCol][curSecRow].push(style);
-     textlist[curSecCol][curSecRow].push(count);
+     textlist[curSecCol][curSecRow].push("");
      this.setState({textlist:textlist,count:count+1,textarea:textarea});
      }
    /*新增文本框并显示文本编辑工具条*/
@@ -143,23 +173,30 @@ export default class PCEditor extends React.Component{
  /*新增图片*/
  addImage(e){
    let {curSecCol,curSecRow}=this.state;
-    let imagelist = this.state.imagelist;
     let count = this.state.imageCount;
     let imagearea = this.state.imagearea;
-    let style = [0,10,0,0,"solid","#000",0,200,200];/*rotation,opacity,borderWidth,borderRadius,borderStyle,borderColor*/
+    let style = [0,10,0,0,"solid","#000","translate(0,0)",200,200];/*rotation,opacity,borderWidth,borderRadius,borderStyle,borderColor*/
     imagearea[curSecCol][curSecRow].push(style);
-    imagelist[curSecCol][curSecRow].push(count);
-    this.setState({imagelist:imagelist,imageCount:count+1,imagearea:imagearea});
+    this.setState({imageCount:count+1,imagearea:imagearea});
     }
     /*image upload*/
-    uploadImage({ file, fileList }){
-      let imageObjectList = this.state.imageObjectList;/*
-      let url = file.url;
-      imageObjectList.push(url);*/
-      console.log(file,fileList);/*
-      this.setState(imageObjectList:imageObjectList);
-      if (file.status !== "uploading") {
-    }*/
+    uploadImage(e){
+      e.preventDefault();
+      let {curSecCol,curSecRow}=this.state;
+      let imagelist = this.state.imagelist;
+      var fileUploadControl = e.target;
+      if (fileUploadControl.files.length > 0) {
+       var localFile = fileUploadControl.files[0];
+       var name = localFile.name;
+       var file = new AV.File(name, localFile);
+       file.save().then(function(file) {
+         imagelist[curSecCol][curSecRow].push(file.url());
+         return 1;
+       }).then((x)=>{x=1?this.setState({imagelist:imagelist}):''})
+       .catch(function(error) {
+         console.error(error);
+       });
+     }
   }
 
   showimage(e){
@@ -169,20 +206,29 @@ export default class PCEditor extends React.Component{
  /*新增视频*/
  addVideo(e){
     let {curSecCol,curSecRow}=this.state;
-    let videolist = this.state.videolist;
     let count = this.state.videoCount;
     let videoarea = this.state.videoarea;
-    let style = [0,10,0,0,"solid","#000",0,200,200];/*rotation,opacity,borderWidth,borderRadius,borderStyle,borderColor*/
+    let style = [0,10,0,0,"solid","#000","translate(0,0)",200,200];/*rotation,opacity,borderWidth,borderRadius,borderStyle,borderColor*/
     videoarea[curSecCol][curSecRow].push(style);
-    videolist[curSecCol][curSecRow].push(count);
-    this.setState({videolist:videolist,videoCount:count+1,videoarea:videoarea});
+    this.setState({videoCount:count+1,videoarea:videoarea});
     }
-  uploadVideo({ file, fileList }){
-    let videoObjectList = this.state.videoObjectList;
-    let url = file.url;/*
-    videoObjectList.push(url);
-    this.setState(videoObjectList:videoObjectList)*/
-    console.log(file,fileList);
+  uploadVideo(e){
+    e.preventDefault();
+    let {curSecCol,curSecRow}=this.state;
+    let videolist = this.state.videolist;
+    var fileUploadControl = e.target;
+    if (fileUploadControl.files.length > 0) {
+     var localFile = fileUploadControl.files[0];
+     var name = localFile.name;
+     var file = new AV.File(name, localFile);
+     file.save().then(function(file) {
+       videolist[curSecCol][curSecRow].push(file.url());
+       return 1;
+     }).then((x)=>{x=1?this.setState({videolist:videolist}):''})
+     .catch(function(error) {
+       console.error(error);
+     });
+   }
   }
  showvideo(e){
    this.showVideoSider(e);
@@ -292,7 +338,6 @@ export default class PCEditor extends React.Component{
       let {curSecCol,curSecRow}=this.state;
       let textarea = this.state.textarea,textareaKey = this.state.textareaKey;
       textarea[curSecCol][curSecRow][textareaKey][9]=e;
-      console.log(e);
       this.setState({textarea:textarea});
     }
     textColorChange(color){
@@ -405,7 +450,7 @@ export default class PCEditor extends React.Component{
     }
     /*新建幻灯片*/
     addRightSlides(){
-      let{seclist,secNum,currentSecindex,sectransform,secHead,curSecRow,curSecCol,textlist,imagelist,videolist,textarea,imagearea,videoarea} = this.state;
+      let{seclist,secNum,currentSecindex,sectransform,curSecRow,curSecCol,textlist,imagelist,videolist,textarea,imagearea,videoarea} = this.state;
       let row = curSecRow;
       sectransform[curSecCol][curSecRow][0]="translate(-2000px,0)";/*使当前幻灯片向左滑动*/
       if(!seclist[curSecCol+1]){
@@ -426,12 +471,12 @@ export default class PCEditor extends React.Component{
       textarea[curSecCol+1].splice([curSecRow],0,[]);
       imagearea[curSecCol+1].splice([curSecRow],0,[]);
       videoarea[curSecCol+1].splice([curSecRow],0,[]);
-      console.log("seclist:",seclist,"curSecRow",curSecRow,"curSecCol",curSecCol,"textlist",textlist);
       this.setState({seclist:seclist,secNum:secNum+1,sectransform:sectransform,curSecCol:curSecCol+1,curSecRow:0,
       textlist:textlist,imagelist:imagelist,videolist:videolist,textarea:textarea,imagearea:imagearea,videoarea:videoarea});
+      console.log("seclist",seclist);
     };
     addDownSlides(){
-      let{seclist,secNum,currentSecindex,sectransform,secHead,curSecCol,curSecRow,textlist,imagelist,videolist,textarea,imagearea,videoarea} = this.state;
+      let{seclist,secNum,currentSecindex,sectransform,curSecCol,curSecRow,textlist,imagelist,videolist,textarea,imagearea,videoarea} = this.state;
       sectransform[curSecCol][curSecRow][0]="translate(0,-1000px)";/*使当前幻灯片向上滑动*/
       /*sectransform[curSecCol][curSecRow][2]=0;*//*使当前幻灯片高度为0*/
       seclist[curSecCol].splice([curSecRow+1],0,"y");
@@ -442,9 +487,10 @@ export default class PCEditor extends React.Component{
       textarea[curSecCol].splice([curSecRow+1],0,[]);
       imagearea[curSecCol].splice([curSecRow+1],0,[]);
       videoarea[curSecCol].splice([curSecRow+1],0,[]);
-      console.log("seclist:",seclist,"curSecRow",curSecRow,"curSecCol",curSecCol,"textlist",textlist);
       this.setState({seclist:seclist,secNum:secNum+1,sectransform:sectransform,curSecRow:curSecRow+1,
       textlist:textlist,imagelist:imagelist,videolist:videolist,textarea:textarea,imagearea:imagearea,videoarea:videoarea});
+      console.log("seclist",seclist);
+
 
     };
     navigatorDre(e){
@@ -458,7 +504,9 @@ export default class PCEditor extends React.Component{
           this.setState({sectransform:sectransform,curSecRow:curSecRow+1});
         }else{
           let col = curSecCol+1,row = curSecRow+1;
-          alert("已经是最后一行了！目前在"+col+"列"+row+"行")
+          const modal = Modal.success({
+            title: "已经是最后一行了！目前在"+col+"列"+row+"行"});
+          setTimeout(() => modal.destroy(), 1500);
         }
         break;
       case "navigator-down":
@@ -468,7 +516,9 @@ export default class PCEditor extends React.Component{
         this.setState({sectransform:sectransform,curSecRow:curSecRow-1});
         }else{
           let col = curSecCol+1,row = curSecRow+1;
-          alert("已经是第一行了！目前在"+col+"列"+row+"行")
+          const modal = Modal.success({
+            title: "已经是第一行了！目前在"+col+"列"+row+"行",});
+          setTimeout(() => modal.destroy(), 1500);
         }
         break;
       case "navigator-left":
@@ -478,7 +528,9 @@ export default class PCEditor extends React.Component{
         this.setState({sectransform:sectransform,curSecCol:curSecCol+1});
       }else{
         let col = curSecCol+1,row = curSecRow+1;
-        alert("已经是最后一列了！目前在"+col+"列"+row+"行")
+        const modal = Modal.success({
+          title: "已经是最后一列了！目前在"+col+"列"+row+"行"});
+        setTimeout(() => modal.destroy(), 1500);
       }
         break;
       case "navigator-right":
@@ -488,24 +540,28 @@ export default class PCEditor extends React.Component{
         this.setState({sectransform:sectransform,curSecCol:curSecCol-1});
       }else{
         let col = curSecCol+1,row = curSecRow+1;
-        alert("已经是第一列了！目前在"+col+"列"+row+"行")
+        const modal = Modal.success({
+          title: "已经是第一列了！目前在"+col+"列"+row+"行"});
+        setTimeout(() => modal.destroy(), 1500);
       }
         break;
       }
     }
     /*储存到本地*/
-    storageSlides(){
-      let {secId,slideslist,slidesIndex,sectransform,seclist,curSecRow,curSecCol} = this.state;
+    storageSlides(e){
+      e.preventDefault();
+      let {secId,slideslist,slidesIndex,sectransform,seclist,curSecRow,curSecCol,curslidesName,slidesId} = this.state;
       let userid = localStorage.userid;
-      /*if(curSecCol != 0 && curSecRow != 0 && seclist[curSecCol][curSecRow-1]=="y"){
+      let slidesJSON = '';
+      if(curSecCol != 0 && curSecRow != 0 && seclist[curSecCol][curSecRow-1]=="y"){
         sectransform[curSecCol][curSecRow]=["translate(0,-1000px)","100%",0];
         sectransform[0][0]=["translate(0,0)","100%","100%"];
       }else if(curSecCol != 0 && curSecRow != 0 && seclist[curSecCol-1][curSecRow]=="y"){
         sectransform[curSecCol][curSecRow]=["translate(-2000px,0)",0,"100%"];
         sectransform[0][0]=["translate(0,0)","100%","100%"];
-      }*/
-      if(slideslist.length >   slidesIndex){
-        let slidesJSON = {
+      }
+      if(this.state.curslidesName!=""){
+        slidesJSON = {
           "seclist":this.state.seclist,
           "textlist":this.state.textlist,
           "imagelist":this.state.imagelist,
@@ -518,9 +574,9 @@ export default class PCEditor extends React.Component{
           "slidesName":this.state.curslidesName
         };
         slideslist[slidesIndex]=slidesJSON;
-      }else if(slideslist.length==slidesIndex){
-        let slidesName=prompt("请输入幻灯片的名字","Slides_01");
-        let slidesJSON = {
+      }else if(/*slideslist.length==slidesIndex*/this.state.curslidesName == ""){
+        curslidesName=prompt("请输入幻灯片的名字","Slides_01");
+        slidesJSON = {
           "seclist":this.state.seclist,
           "textlist":this.state.textlist,
           "imagelist":this.state.imagelist,
@@ -530,19 +586,48 @@ export default class PCEditor extends React.Component{
           "videoarea":this.state.videoarea,
           "transform":this.state.transform,
           "sectransform":sectransform,
-          "slidesName":slidesName
+          "slidesName":curslidesName
         };
         slideslist.push(slidesJSON);
-        this.setState({slidesName:slidesName});
+        this.setState({curslidesName:curslidesName});
       };
-      console.log("slideslist",slideslist);
-      let slideslistStr = JSON.stringify(slideslist);
+      /*let slideslistStr = JSON.stringify(slideslist);
       localStorage.setItem(userid,slideslistStr);
       this.setState({slideslist:slideslist});
-      /*以下是用于测试的内容*/
-      let localInfo = localStorage.getItem(userid);
-      let jsonlocalInfo = JSON.parse(localInfo);
-      console.log("jsonlocalInfo",jsonlocalInfo);
+
+      var Slides = AV.Object.extend('Slides');
+      var slides = new Slides();
+
+      slides.set('userid', localStorage.userid);
+      slides.set('slides', slideslistStr);
+      slides.save().then(function (slides) {
+        // 成功保存之后，执行其他逻辑.
+      }, function (error) {
+        // 异常处理
+      });*/
+      if(slidesId!="undefined"){
+        // 第一个参数是 className，第二个参数是 objectId
+        var slides = AV.Object.createWithoutData('Slides',slidesId);
+        // 修改属性
+        slides.set('content', JSON.stringify(slidesJSON));
+        slides.set('title', curslidesName);
+        // 保存到云端
+        slides.save();
+      }else if(slidesId == "undefined"){
+        var slides = new Slides();
+        slides.set('title', curslidesName);
+        slides.set('content', JSON.stringify(slidesJSON));
+        slides.set('owner', AV.User.current());
+        slides.set('userName',localStorage.userNickName)
+        slides.save().then(function(slide) {
+    			return slide;
+    		})
+    		.then((slide)=>{slide?this.setState({slidesId:slide.id,storage:true}):''})
+    		.catch(function (error) {
+    		    alert(JSON.stringify(error));
+    				return 0;
+    		  });
+      }
     }
     showviwer(){
       this.setState({viewerDispaly:"block",contentEditable:"false"});
@@ -554,7 +639,6 @@ export default class PCEditor extends React.Component{
         let {curSecCol,curSecRow,textlist,textareaKey}=this.state;
         textlist[curSecCol][curSecRow][textareaKey] = e.target.textContent;
         this.setState({textlist:textlist});
-        console.log("textlist:",textlist);
     }
     getTextareaPosition(e){
       let {curSecCol,curSecRow,textarea,textareaKey}=this.state;
@@ -571,7 +655,6 @@ export default class PCEditor extends React.Component{
         let {curSecCol,curSecRow,imagelist,imageareaKey}=this.state;
         imagelist[curSecCol][curSecRow][imageareaKey] = e.target.src;
         this.setState({imagelist:imagelist});
-        console.log("imagelist:",imagelist);
     }
     getImagePosition(e){
       let {curSecCol,curSecRow,imagearea,imageareaKey}=this.state;
@@ -588,7 +671,6 @@ export default class PCEditor extends React.Component{
         let {curSecCol,curSecRow,videolist,videoareaKey}=this.state;
         videolist[curSecCol][curSecRow][videoareaKey] = e.target.src;
         this.setState({videolist:videolist});
-        console.log("videolist:",videolist);
     }
     getVideoPosition(e){
       let {curSecCol,curSecRow,videoarea,videoareaKey}=this.state;
@@ -605,22 +687,12 @@ export default class PCEditor extends React.Component{
       let{textarea,textareaKey,textlist,curSecRow,curSecCol} = this.state;
       textlist[curSecCol][curSecRow].splice([textareaKey],1);
       textarea[curSecCol][curSecRow].splice([textareaKey],1);
-      console.log("textlist",textlist);
       this.setState({textlist:textlist,textarea:textarea});
     }
     deleteSlides(e){
-      let{seclist,secNum,currentSecindex,sectransform,secHead,curSecCol,curSecRow,textlist,imagelist,videolist,textarea,imagearea,videoarea} = this.state;
+      let{seclist,secNum,currentSecindex,sectransform,curSecCol,curSecRow,textlist,imagelist,videolist,textarea,imagearea,videoarea} = this.state;
 
-      if(seclist.length==1 && [curSecCol-1]<0 && [curSecRow-1]<0){/*当前只有一张幻灯片，删除后则为空白*/
-        seclist[curSecCol].splice([curSecRow],1,"y");
-        sectransform[curSecCol].splice([curSecRow],["translate(0,0)","100%","100%","block"]);
-        textlist[curSecCol].splice([curSecRow],1,[]);
-        imagelist[curSecCol].splice([curSecRow],1,[]);
-        videolist[curSecCol].splice([curSecRow],1,[]);
-        textarea[curSecCol].splice([curSecRow],1,[]);
-        imagearea[curSecCol].splice([curSecRow],1,[]);
-        videoarea[curSecCol].splice([curSecRow],1,[]);
-      }else if(seclist[curSecCol].length<=1){/*当前列只有一张幻灯片，删除当前幻灯片即删除当前列*/
+       if(seclist.length > 1 && seclist[curSecCol].length<=1){/*当前列只有一张幻灯片，删除当前幻灯片即删除当前列*/
         seclist.splice([curSecCol],1);
         sectransform.splice([curSecCol],1);
         textlist.splice([curSecCol],1);
@@ -629,14 +701,13 @@ export default class PCEditor extends React.Component{
         textarea.splice([curSecCol],1);
         imagearea.splice([curSecCol],1);
         videoarea.splice([curSecCol],1);
-        if(seclist[curSecCol+1][curSecRow] == "y"){
-          sectransform[curSecCol+1][curSecRow][0]="translate(0,0)";
-          curSecCol=curSecCol+1;
-        }else if(seclist[curSecCol-1][curSecRow] == "y"){
+        if(seclist.length>curSecCol&&seclist[curSecCol][curSecRow] == "y"){/*列数大于1,且总列数大于当前页码，则向后一列移动*/
+          sectransform[curSecCol][curSecRow][0]="translate(0,0)";
+        }else if(seclist[curSecCol-1][curSecRow] && seclist[curSecCol-1][curSecRow] == "y"){
           sectransform[curSecCol-1][curSecRow][0]="translate(0,0)";
           curSecCol=curSecCol-1;
         }
-      }else if(seclist[curSecCol].length>1){//当前列不止一张幻灯片
+      }else if(seclist.length >= 1 && seclist[curSecCol].length > 1){
         seclist[curSecCol].splice([curSecRow],1);
         sectransform[curSecCol].splice([curSecRow],1);
         textlist[curSecCol].splice([curSecRow],1);
@@ -645,15 +716,24 @@ export default class PCEditor extends React.Component{
         textarea[curSecCol].splice([curSecRow],1);
         imagearea[curSecCol].splice([curSecRow],1);
         videoarea[curSecCol].splice([curSecRow],1);
-        if(seclist[curSecCol][curSecRow+1] == "y"){
-          sectransform[curSecCol][curSecRow+1][0]="translate(0,0)";
-          curSecRow=curSecRow=1;
+        if(seclist[curSecCol][curSecRow] == "y"){
+          sectransform[curSecCol][curSecRow][0]="translate(0,0)";
         }else if(seclist[curSecCol][curSecRow-1] == "y"){
           sectransform[curSecCol][curSecRow-1][0]="translate(0,0)";
           curSecRow=curSecRow-1;
         }
+      }else if(seclist.length == 1 && seclist[curSecCol].length == 1){/*当前只有一张幻灯片，删除后则为空白*/
+        seclist[curSecCol].splice([curSecRow],1,"y");
+        sectransform[curSecCol].splice([curSecRow],["translate(0,0)","100%","100%","block"]);
+        textlist[curSecCol].splice([curSecRow],1,[]);
+        imagelist[curSecCol].splice([curSecRow],1,[]);
+        videolist[curSecCol].splice([curSecRow],1,[]);
+        textarea[curSecCol].splice([curSecRow],1,[]);
+        imagearea[curSecCol].splice([curSecRow],1,[]);
+        videoarea[curSecCol].splice([curSecRow],1,[]);
       }
-      console.log("seclist:",seclist,"curSecRow",curSecRow,"curSecCol",curSecCol,"textlist",textlist);
+      console.log("seclist",seclist);
+
       this.setState({seclist:seclist,secNum:secNum+1,sectransform:sectransform,curSecRow:curSecRow,curSecCol:curSecCol,
       textlist:textlist,imagelist:imagelist,videolist:videolist,textarea:textarea,imagearea:imagearea,videoarea:videoarea});
     }
@@ -664,44 +744,53 @@ export default class PCEditor extends React.Component{
       videoObjectList:[],seclist:[["y"]],secNum:0,curSecRow:0,curSecCol:0,
       sectransform:[[["translate(0,0)","100%","100%","block"]],],slidesIndex:slidesIndex+1});
     }
-    deleteAllSlides(){
-      let {slideslist,slidesIndex} = this.state;
+    deleteAllSlides(e){
+    /*  let {slideslist,slidesIndex} = this.state;
       let del=confirm("确定要删除该幻灯片吗？");
       if(del == true){
         this.clearslides();
         slideslist[slidesIndex]?slideslist.splice(slidesIndex,1):"";
         this.setState({slideslist:slideslist});
+        this.storageSlides();
+      }*/
+      if(this.state.slidesId != "undefined"){
+        e.preventDefault();
+        let index = this.state.slidesId;
+        var slides = AV.Object.createWithoutData('Slides', index);
+        slides.destroy().then(function (success) {
+      })
+      .catch(function (error) {
+        // 删除失败
+      });
       }
     };
     newSlides(){
-      let {slideslist,slidesIndex} = this.state;
-      let storage = confirm("是否需要保存当前幻灯片？");
-      if(storage == false){
-        this.clearslides();
-        slideslist[slidesIndex]?slideslist.splice(slidesIndex,1):"";
+      //let {slideslist,slidesIndex,nextslidesIndex} = this.state;
+    /*  let storage = confirm("是否需要保存当前幻灯片？");
+      if(storage == false){*/
+        /*this.clearslides();
+       slideslist[slidesIndex]?slideslist.splice(slidesIndex,1):"";
+        if(slideslist.length == slidesIndex + 1){
+          nextslidesIndex = parseInt(slidesIndex) + 1;
+        }else if(slideslist.length == slidesIndex){
+          nextslidesIndex = parseInt(slidesIndex);
+        }
         this.setState({slideslist:slideslist});
-      }else if(storage == true){
+      }else if(storage == true){*/
         this.storageSlides();
+        /*nextslidesIndex = parseInt(slidesIndex)+1;
         this.clearslides();
-        this.setState({slidesIndex:slidesIndex+1});
-      }
+        this.setState({slidesIndex:slidesIndex+1});*/
+      /*}*/
+      //this.setState({nextslidesIndex:nextslidesIndex});
     }
 render(){
-   let {imagearea,imageareaKey,imagelist,imageObjectList,videoObjectList} = this.state;
+   let {imagearea,imageareaKey,imagelist} = this.state;
    let {videoarea,videoareaKey,videolist} = this.state;
    let {textarea,textareaKey,textlist}=this.state;
    let {curSecCol,curSecRow}=this.state;
-   let {sectransform,seclist,secHead,secpre} = this.state;
-   const props = {
-     action: "",
-     headers: {
-       "Access-Control-Allow-Origin":"*"
-     },
-     listType: "picture",
-     onChange: (file,fileList)=>{
-       console.log("file",file,"fileList",fileList);
-     }
-    };
+   let {sectransform,seclist,slidesIndex} = this.state;
+
    let showSeclist = seclist ?
     seclist.map((secCol,colindex)=>{
       let secCollist=[] ;
@@ -715,7 +804,7 @@ render(){
           getTextContent = {this.getTextContent.bind(this)}
           getTextareaPosition={this.getTextareaPosition.bind(this)}
           getTextareaSize={this.getTextareaSize.bind(this)}
-          textarea={textarea[colindex][rowindex][tindex]} count = {tindex}
+          textarea={textarea[colindex][rowindex][tindex]} count = {tindex} text={text}
           showTextSider={this.showTextSider.bind(this)}/>
          ))
            :
@@ -723,12 +812,13 @@ render(){
        let showImagelist = imagelist[colindex][rowindex] ?
        imagelist[colindex][rowindex].map((image,index)=>(
          <PCEditorImagearea key={index} imagekey={index}
+         image = {image}
          getImageContent = {this.getImageContent.bind(this)}
          getImagePosition={this.getImagePosition.bind(this)}
          getImageSize={this.getImageSize.bind(this)}
          getImageareaKey = {this.getImageareaKey.bind(this)}
-         imagearea={imagearea[colindex][rowindex][index]} count = {index}
-         imageObjectList={imageObjectList}
+         imagearea={imagearea[colindex][rowindex][index]}
+         count = {index}
          showImageSider={this.showImageSider.bind(this)}/>
         ))
           :
@@ -737,12 +827,12 @@ render(){
       videolist[colindex][rowindex].map((video,index)=>{
         return(
         <PCEditorVideoarea key={index} videokey={index}
+        video = {video}
         getVideoContent = {this.getVideoContent.bind(this)}
         getVideoPosition={this.getVideoPosition.bind(this)}
         getVideoSize={this.getVideoSize.bind(this)}
         getVideoareaKey = {this.getVideoareaKey.bind(this)}
         videoarea={videoarea[colindex][rowindex][index]} count = {index}
-        videoObjectList={videoObjectList}
         showVideoSider={this.showVideoSider.bind(this)}/>
        )})
          :
@@ -807,7 +897,7 @@ let showSlideslist = seclist ?
         borderRadius:imagearea[colindex][rowindex][index][3],
         transform:imagearea[colindex][rowindex][index][6]+" rotate("+imagearea[colindex][rowindex][index][0]+"deg)",
       }}
-       autoFocus="autofocus" src="./src/images/timg.jpg"/>
+       autoFocus="autofocus" src={image}/>
      ))
        :
        "";
@@ -830,9 +920,9 @@ let showSlideslist = seclist ?
        borderRadius:videoarea[colindex][rowindex][index][3],
        transform:videoarea[colindex][rowindex][index][6]+" rotate("+videoarea[colindex][rowindex][index][0]+"deg)",
      }}>
-       <source src="./src/images/test.mp4"  type="video/mp4"/>
-       <source src="./src/images/test.mp4"  type="video/ogg"/>
-       <source src="./src/images/test.mp4"  type="video/webm"/>
+       <source src={video}  type="video/mp4"/>
+       <source src={video}  type="video/ogg"/>
+       <source src={video}  type="video/webm"/>
        </video>
     )})
       :
@@ -851,7 +941,6 @@ return secCollist;
 })
 :
 "";
-
     return (
         <div>
         <PCHeader/>
@@ -863,16 +952,20 @@ return secCollist;
                     {/*<Button htmlType="button" id="tool-btn2" title="撤销">
                       <Icon class="tool-icon" type="rollback" />
                     </Button>*/}
+                    <Link target="_self" to={`/editor/:undefined`}>
                     <Button htmlType="button" id="tool-btn5" title="删除" onClick={this.deleteAllSlides.bind(this)}>
                       <Icon class="tool-icon" type="delete" />
                     </Button>
+                    </Link>
+                    <Link target="_self" to={`/editor/:undefined`}>
                     <Button htmlType="button" id="tool-btn6" title="新建幻灯片" onClick={this.newSlides.bind(this)}>
                       <Icon class="tool-icon" type="plus" />
                     </Button>
+              			</Link>
                     {/*<Button htmlType="button" id="tool-btn7" title="设置">
                       <Icon class="tool-icon" type="setting" />
                     </Button>*/}
-                    <Link target="_blank" to={`/player`}>
+                    <Link target="_blank" to={`/player/${this.state.slidesId}`}>
                     <Button htmlType="button" id="tool-btn4" title="播放">
                       <Icon class="tool-icon" type="caret-right" />
                     </Button>
@@ -881,28 +974,21 @@ return secCollist;
                       <Icon class="tool-icon" type="save" />
                     </Button>
               </Sider>
-              <Sider class="sider" id="func-menu" width="210" style={{ visibility:this.state.originSider,opacity:this.state.originSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80,transition: "opacity 0.5s linear"}}>
+              <Sider class="sider" id="func-menu" width="210" style={{ display:this.state.originSider,opacity:this.state.originSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80,transition: "opacity 0.5s linear"}}>
                 <Button htmlType="button" id="text" title="添加文本"  onClick={this.showtext.bind(this)}>
                   <Icon class="tool-icon" type="file-text" />
                 </Button>
-                <Upload {...props}>
-                <Button htmlType="button" id="images" title="添加图片"  onClick={this.showimage.bind(this)}>
-                    <Icon class="tool-icon" type="picture" />
-                </Button>
-                </Upload>
-                <Upload
-                accept="vedio"
-                action= ""
-                onChange={this.uploadVideo.bind(this)}>
-                <Button htmlType="button" id="video" title="添加视频" onClick={this.showvideo.bind(this)}>
-                    <Icon class="tool-icon" type="video-camera" />
-                </Button>
-                </Upload>
+
+                <form>
+                  <input id="image" type="file" accept="image/png,image/jpeg,image/gif,image/jpg"
+                  onClick={this.showimage.bind(this)} onChange={this.uploadImage.bind(this)}/>
+                  <input id="video" type="file" accept="video/mp4,video/ogg,video/webm" onClick={this.showvideo.bind(this)} onChange={this.uploadVideo.bind(this)}/>
+                </form>
                 <Button htmlType="button" id="deleteSlide" title="删除当前幻灯片"  onClick={this.deleteSlides.bind(this)}>
                   <Icon class="tool-icon" type="delete" />
                 </Button>
               </Sider>
-              <Sider class="sider" id="text-menu" width="210" style={{visibility:this.state.textSider,opacity:this.state.textSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80,transition:"opacity 0.5s linear", }}>
+              <Sider class="sider" id="text-menu" width="210" style={{display:this.state.textSider,opacity:this.state.textSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80,transition:"opacity 0.5s linear", }}>
                   <PCEditorTextsidebar
                   showOriginSider={this.showOriginSider.bind(this)}
                   getTextAlignKey={this.getTextAlignKey.bind(this)}
@@ -919,7 +1005,7 @@ return secCollist;
                   deleteText={this.deleteText.bind(this)}
                   />
               </Sider>
-              <Sider class="sider" id="image-menu" width="200" style={{visibility:this.state.imagesSider,opacity:this.state.imagesSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80 ,transition: "opacity 0.5s linear",}}>
+              <Sider class="sider" id="image-menu" width="200" style={{display:this.state.imagesSider,opacity:this.state.imagesSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80 ,transition: "opacity 0.5s linear",}}>
                 <PCEditorImagesidebar
                 showOriginSider={this.showOriginSider.bind(this)}
                 irotationChange={this.irotationChange.bind(this)}
@@ -930,7 +1016,7 @@ return secCollist;
                 imageObjectList={this.state.imageObjectList}
                 />
               </Sider>
-              <Sider class="sider" id="video-menu" width="200" style={{visibility:this.state.videoSider,opacity:this.state.videoSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80,transition:"opacity 0.5s linear", }}>
+              <Sider class="sider" id="video-menu" width="200" style={{display:this.state.videoSider,opacity:this.state.videoSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80,transition:"opacity 0.5s linear", }}>
                 <PCEditorVideosidebar
                 showOriginSider={this.showOriginSider.bind(this)}
                 vrotationChange={this.vrotationChange.bind(this)}
@@ -960,10 +1046,10 @@ return secCollist;
                 {showSlideslist}
               </div>
               <aside class="control" style={{position:"absolute",right:0,bottom:0}}>
-                <Button id="navigator-up" htmlType="button"  onClick={this.navigatorDre.bind(this)}><Icon type="up" /></Button>
-                <Button id="navigator-down" htmlType="button"  onClick={this.navigatorDre.bind(this)} ><Icon type="down" /></Button>
-                <Button id="navigator-left" htmlType="button"  onClick={this.navigatorDre.bind(this)} ><Icon type="left" /></Button>
-                <Button id="navigator-right" htmlType="button"  onClick={this.navigatorDre.bind(this)} ><Icon type="right" /></Button>
+                <Button id="navigator-up" htmlType="button"  style={{background:"none",border:"none",display:"inline"}} onClick={this.navigatorDre.bind(this)}><Icon type="up" /></Button>
+                <Button id="navigator-left" htmlType="button" style={{background:"none",border:"none"}}  onClick={this.navigatorDre.bind(this)} ><Icon type="left" /></Button>
+                <Button id="navigator-right" htmlType="button" style={{background:"none",border:"none"}}  onClick={this.navigatorDre.bind(this)} ><Icon type="right" /></Button>
+                <Button id="navigator-down" htmlType="button" style={{background:"none",border:"none",display:"inline"}}  onClick={this.navigatorDre.bind(this)} ><Icon type="down" /></Button>
               </aside>
               <Button class="close" htmlType="button" onClick={this.closeviwer.bind(this)} style={{position:"absolute",height:"50px",width:"50px",padding:0,boxSizing:"border-box",border:"none",top:"2%",right:0,fontSize:50,textAlign:"center",background:"none"}}><Icon type="close" /></Button>
             </div>
