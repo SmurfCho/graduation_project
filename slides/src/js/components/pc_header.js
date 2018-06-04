@@ -45,7 +45,7 @@ class PCHeader extends React.Component{
 	}
 	componentWillMount(){
 		console.log(localStorage);
-		if(localStorage.userid!=""&&localStorage.userid != "undefined"){
+		if(localStorage.userid != "" && localStorage.userid != "undefined"){
 			this.setState({hasLogined:true});
 			this.setState({userNickName:localStorage.userNickName,userId:localStorage.userid})
 		}

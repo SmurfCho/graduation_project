@@ -611,6 +611,7 @@ export default class PCEditor extends React.Component{
         // 修改属性
         slides.set('content', JSON.stringify(slidesJSON));
         slides.set('title', curslidesName);
+        slides.set('userName',localStorage.username);
         // 保存到云端
         slides.save();
       }else if(slidesId == "undefined"){
@@ -618,7 +619,7 @@ export default class PCEditor extends React.Component{
         slides.set('title', curslidesName);
         slides.set('content', JSON.stringify(slidesJSON));
         slides.set('owner', AV.User.current());
-        slides.set('userName',localStorage.userNickName)
+        slides.set('userName',localStorage.username);
         slides.save().then(function(slide) {
     			return slide;
     		})
@@ -860,7 +861,9 @@ let showSlideslist = seclist ?
      textlist[colindex][rowindex].map((text,index)=>(
        <div key={index} style={{
          margin:0,
-         position:"absolute",
+         position: "absolute",
+         wordBreak: "break-all",
+         wordWrap: "break-word",
          height:textarea[colindex][rowindex][index][13],
          width:textarea[colindex][rowindex][index][14],
          padding:textarea[colindex][rowindex][index][11],
@@ -979,10 +982,14 @@ return secCollist;
                   <Icon class="tool-icon" type="file-text" />
                 </Button>
 
-                <form>
-                  <input id="image" type="file" accept="image/png,image/jpeg,image/gif,image/jpg"
+                <form id="image" style={{backgroundColor:"#fff",borderRadius:4}}>
+                  <label style={{fontSize:16,color:"#000000a6"}}>添加图片</label>
+                  <input  type="file" accept="image/png,image/jpeg,image/gif,image/jpg" style={{fontSize:10,color:"#000000a6"}}
                   onClick={this.showimage.bind(this)} onChange={this.uploadImage.bind(this)}/>
-                  <input id="video" type="file" accept="video/mp4,video/ogg,video/webm" onClick={this.showvideo.bind(this)} onChange={this.uploadVideo.bind(this)}/>
+                </form>
+                <form id="video" style={{backgroundColor:"#fff",borderRadius:4}}>
+                  <label style={{fontSize:16,color:"#000000a6"}}>添加视频</label>
+                  <input  type="file" accept="video/mp4,video/ogg,video/webm" style={{fontSize:10,color:"#000000a6"}} onClick={this.showvideo.bind(this)} onChange={this.uploadVideo.bind(this)}/>
                 </form>
                 <Button htmlType="button" id="deleteSlide" title="删除当前幻灯片"  onClick={this.deleteSlides.bind(this)}>
                   <Icon class="tool-icon" type="delete" />
@@ -1046,10 +1053,10 @@ return secCollist;
                 {showSlideslist}
               </div>
               <aside class="control" style={{position:"absolute",right:0,bottom:0}}>
-                <Button id="navigator-up" htmlType="button"  style={{background:"none",border:"none",display:"inline"}} onClick={this.navigatorDre.bind(this)}><Icon type="up" /></Button>
-                <Button id="navigator-left" htmlType="button" style={{background:"none",border:"none"}}  onClick={this.navigatorDre.bind(this)} ><Icon type="left" /></Button>
-                <Button id="navigator-right" htmlType="button" style={{background:"none",border:"none"}}  onClick={this.navigatorDre.bind(this)} ><Icon type="right" /></Button>
-                <Button id="navigator-down" htmlType="button" style={{background:"none",border:"none",display:"inline"}}  onClick={this.navigatorDre.bind(this)} ><Icon type="down" /></Button>
+              <Button id="navigator-up" htmlType="button"  onClick={this.navigatorDre.bind(this)}><Icon type="up" /></Button>
+              <Button id="navigator-down" htmlType="button"  onClick={this.navigatorDre.bind(this)} ><Icon type="down" /></Button>
+              <Button id="navigator-left" htmlType="button"  onClick={this.navigatorDre.bind(this)} ><Icon type="left" /></Button>
+              <Button id="navigator-right" htmlType="button"  onClick={this.navigatorDre.bind(this)} ><Icon type="right" /></Button>
               </aside>
               <Button class="close" htmlType="button" onClick={this.closeviwer.bind(this)} style={{position:"absolute",height:"50px",width:"50px",padding:0,boxSizing:"border-box",border:"none",top:"2%",right:0,fontSize:50,textAlign:"center",background:"none"}}><Icon type="close" /></Button>
             </div>

@@ -35,8 +35,28 @@ export default class PCUserCenter extends React.Component{
       slideslist:"",
       userid:"",
       context:[],
+      linkVisible: false,
+      slidesId:'',
     };
   };
+  showShareModal(e){
+    let index = e.target.id;
+    this.setState({
+      linkVisible: true,slidesId:index
+    });
+  }
+  handleShareOk(e){
+    console.log(e);
+    this.setState({
+      linkVisible: false,
+    });
+  }
+  handleShareCancel(e){
+    console.log(e);
+    this.setState({
+      linkVisible: false,
+    });
+  }
   handleCancel(e){
     this.setState({
       previewVisible: false,
@@ -125,18 +145,19 @@ export default class PCUserCenter extends React.Component{
 
       <Card key={index} >
         <Row>
-        <Col span={18}>
+        <Col span={16}>
           <Link to={`/player/${slides[2]}`}  target="_blank">
             <span>{index+1}&nbsp;&nbsp;&nbsp;{slides[0]}</span>
           </Link>
         </Col>
-        <Col span={6} id={index}>
+        <Col span={8} id={index}>
           <Link to={`/player/${slides[2]}`}  target="_blank">
             <Button style={{marginRight:10}}>播放</Button>
           </Link>
           <Link to={`/editor/${slides[2]}`}  target="_self">
             <Button style={{marginRight:10}}>编辑</Button>
           </Link>
+          <Button id={slides[2]} style={{marginRight:10}} type="primary" onClick={this.showShareModal.bind(this)}>分享</Button>
           <Button id={slides[2]} style={{marginRight:60}} onClick={this.deleteSlides.bind(this)}>删除</Button>
         </Col>
         </Row>
@@ -167,7 +188,15 @@ export default class PCUserCenter extends React.Component{
             <TabPane tab="我的作品列表" key="1">
               <div class="comment">
                 <Row>
-                  <Col span={24}>{userworkList}</Col>
+                  <Col span={24}>{userworkList}
+                  <Modal
+                    title="复制链接分享演示文稿"
+                    visible={this.state.linkVisible}
+                    onOk={this.handleShareOk.bind(this)}
+                    onCancel={this.handleShareCancel.bind(this)}
+                  >
+                    <p>localhost:8080/player/{this.state.slidesId}</p>
+                  </Modal></Col>
                 </Row>
               </div>
             </TabPane>

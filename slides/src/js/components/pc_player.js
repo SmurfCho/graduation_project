@@ -118,6 +118,8 @@ export default class PCPlayer extends React.Component{
            <div key={index} style={{
              margin:0,
              position:"absolute",
+             wordBreak: "break-all",
+             wordWrap: "break-word",
              height:textarea[colindex][rowindex][index][13],
              width:textarea[colindex][rowindex][index][14],
              padding:textarea[colindex][rowindex][index][11],
