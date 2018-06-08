@@ -690,6 +690,18 @@ export default class PCEditor extends React.Component{
       textarea[curSecCol][curSecRow].splice([textareaKey],1);
       this.setState({textlist:textlist,textarea:textarea});
     }
+    deleteImage(e){
+      let{imagearea,imageareaKey,imagelist,curSecRow,curSecCol} = this.state;
+      imagelist[curSecCol][curSecRow].splice([imageareaKey],1);
+      imagearea[curSecCol][curSecRow].splice([imageareaKey],1);
+      this.setState({imagelist:imagelist,imagearea:imagearea});
+    }
+    deleteVideo(e){
+      let{videoarea,videoareaKey,videolist,curSecRow,curSecCol} = this.state;
+      videolist[curSecCol][curSecRow].splice([videoareaKey],1);
+      videoarea[curSecCol][curSecRow].splice([videoareaKey],1);
+      this.setState({videolist:videolist,videoarea:videoarea});
+    }
     deleteSlides(e){
       let{seclist,secNum,currentSecindex,sectransform,curSecCol,curSecRow,textlist,imagelist,videolist,textarea,imagearea,videoarea} = this.state;
 
@@ -1021,6 +1033,7 @@ return secCollist;
                 iborderRadiusChange={this.iborderRadiusChange.bind(this)}
                 iborderColorChange={this.iborderColorChange.bind(this)}
                 imageObjectList={this.state.imageObjectList}
+                deleteImage={this.deleteImage.bind(this)}
                 />
               </Sider>
               <Sider class="sider" id="video-menu" width="200" style={{display:this.state.videoSider,opacity:this.state.videoSiderop, overflow: "scroll", height: "90vh", position: "fixed", left: 80,transition:"opacity 0.5s linear", }}>
@@ -1030,7 +1043,8 @@ return secCollist;
                 vopacityChange={this.vopacityChange.bind(this)}
                 vborderWidthChange={this.vborderWidthChange.bind(this)}
                 vborderRadiusChange={this.vborderRadiusChange.bind(this)}
-                vborderColorChange={this.vborderColorChange.bind(this)}/>
+                vborderColorChange={this.vborderColorChange.bind(this)}
+                deleteVideo={this.deleteVideo.bind(this)}/>
               </Sider>
               <Content style={{position:"fixed",overflow:"hidden", left:300,width:"74%",height:"90%",margin: "0 16px",backgroundColor:"#ddd", padding: 0, minHeight: 280 }}>
 

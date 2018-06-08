@@ -170,6 +170,9 @@ render(){
           <div class="image-func">
             <p>Depth</p>
           </div>
+          <div class="text-func">
+            <Button class="delete" onClick={this.props.deleteImage.bind(this)}><Icon type="delete" /></Button>
+          </div>
         </div>
 
     );

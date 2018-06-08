@@ -178,6 +178,9 @@ render(){
           <div class="video-func">
             <p>Depth</p>
           </div>
+          <div class="text-func">
+            <Button class="delete" onClick={this.props.deleteVideo.bind(this)}><Icon type="delete" /></Button>
+          </div>
         </div>
 
     );

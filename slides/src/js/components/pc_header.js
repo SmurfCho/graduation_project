@@ -162,7 +162,7 @@ class PCHeader extends React.Component{
 		<Menu.Item key="logout" class="register">
 			<p class="linkStyle">
 			<Link target="_self" to={`/editor/${this.state.slidesId}`}>
-				<Button type="primary" htmlType="button" onClick={this.newSlides.bind(this)}>pc_editor</Button>
+				<Button type="primary" htmlType="button" onClick={this.newSlides.bind(this)}>新建slides</Button>
 			</Link>
 			</p>
 			&nbsp;&nbsp;
